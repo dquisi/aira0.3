@@ -105,25 +105,16 @@
                   </div>
                 </template>
               </v-select>
-              <div v-if="!modal.prompt.category_id" class="text-error">
-                {{ t('prompts.form.category') + ' ' + t('common.required') }}
-              </div>
             </div>
             <div class="form-group">
               <label>{{ t('prompts.form.title') }} *</label>
               <input type="text" v-model="modal.prompt.name" class="form-control"
                 :placeholder="t('prompts.promptTitle')" />
-              <div v-if="!modal.prompt.name?.trim()" class="text-error">
-                {{ t('prompts.form.title') + ' ' + t('common.required') }}
-              </div>
             </div>
             <div class="form-group">
               <label>{{ t('prompts.form.content') }} *</label>
               <textarea v-model="modal.prompt.value" rows="5" class="form-control"
                 :placeholder="t('prompts.promptContent')"></textarea>
-              <div v-if="!modal.prompt.value?.trim()" class="text-error">
-                {{ t('prompts.form.content') + ' ' + t('common.required') }}
-              </div>
             </div>
             <div class="form-group favorite-toggle">
               <label>{{ t('prompts.card.favorite') }}</label>
@@ -400,17 +391,23 @@ function closeModalAndReload() {
 }
 
 async function save() {
-  // Validar campos obligatorios
-  if (!modal.prompt.name?.trim()) {
-    showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
-    return;
-  }
-  if (!modal.prompt.value?.trim()) {
-    showNotification(t('prompts.form.content') + ' ' + t('common.required'), 'error');
-    return;
-  }
+  // Validar todos los campos obligatorios de una vez
+  const missingFields = [];
+  
   if (!modal.prompt.category_id) {
-    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+    missingFields.push(t('prompts.form.category'));
+  }
+  
+  if (!modal.prompt.name?.trim()) {
+    missingFields.push(t('prompts.form.title'));
+  }
+  
+  if (!modal.prompt.value?.trim()) {
+    missingFields.push(t('prompts.form.content'));
+  }
+  
+  if (missingFields.length > 0) {
+    showNotification(missingFields.join(', ') + ' ' + t('common.required'), 'error');
     return;
   }
 
