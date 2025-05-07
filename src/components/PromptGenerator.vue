@@ -47,6 +47,35 @@
           <h4>{{ t('prompts.generator.preview') }}</h4>
           <div class="preview-prompt">{{ generatedPrompt }}</div>
           <div class="preview-actions">
+            <div class="preview-form">
+              <div class="form-group">
+                <label>{{ t('prompts.form.title') }} *</label>
+                <input v-model="promptName" class="form-control" type="text" required />
+              </div>
+              <div class="form-group">
+                <label>{{ t('prompts.form.category') }} *</label>
+                <div v-if="selectedCategory">
+                  <div class="category-option selected">
+                    <span class="color-dot" :style="{ backgroundColor: selectedCategory.color }"></span>
+                    {{ selectedCategory.label }}
+                  </div>
+                </div>
+                <div v-else class="text-error">
+                  {{ t('prompts.form.category') + ' ' + t('common.required') }}
+                </div>
+              </div>
+              <div class="form-group">
+                <label>{{ t('common.description') }}</label>
+                <textarea v-model="promptDescription" class="form-control" rows="2"></textarea>
+              </div>
+              <div class="form-group favorite-toggle">
+                <label>{{ t('prompts.card.favorite') }}</label>
+                <label class="switch">
+                  <input type="checkbox" v-model="isFavorite">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
             <button class="btn-primary" @click="savePromptDirectly" :disabled="isSaving">
               <i class="bi bi-save"></i> {{ t('common.save') }}
             </button>
@@ -94,6 +123,9 @@ const selectedCategory = ref<Option | null>(null);
 const instructions = ref('');
 
 const generatedPrompt = ref('');
+const promptName = ref('');
+const promptDescription = ref('');
+const isFavorite = ref(false);
 const isGenerating = ref(false);
 const isSaving = ref(false);
 const loadingCategories = ref(false);
@@ -169,24 +201,27 @@ const savePromptDirectly = async () => {
     showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
     return;
   }
+
+  if (!promptName.value.trim()) {
+    showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
+    return;
+  }
   
   isSaving.value = true;
   try {
-    const words = generatedPrompt.value.trim().split(/\s+/);
-    const title = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+    // Si no se proporciona un nombre, usar los primeros 3 palabras del prompt como título
+    const name = promptName.value.trim() || (() => {
+      const words = generatedPrompt.value.trim().split(/\s+/);
+      return words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+    })();
     
     const payload = {
-      name: title,
+      name: name,
       value: generatedPrompt.value,
+      description: promptDescription.value,
       category_id: selectedCategory.value?.value,
-      is_favorite: false
+      is_favorite: isFavorite.value
     };
-    
-    if (!payload.name.trim()) {
-      showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
-      isSaving.value = false;
-      return;
-    }
     
     const saved = await promptService.create(payload);
     emit('generated', { ...saved, saved: true });
@@ -228,5 +263,93 @@ onMounted(loadCategories);
 .template-btn i {
   font-size: 1.5rem;
   color: var(--primary-color);
+}
+
+.preview-form {
+  margin: 1rem 0;
+  border-top: 1px solid var(--card-border);
+  padding-top: 1rem;
+}
+
+.preview-form .form-group {
+  margin-bottom: 0.75rem;
+}
+
+.preview-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.preview-form input[type="text"],
+.preview-form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  background-color: var(--card-background);
+  color: var(--text-color);
+}
+
+.favorite-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-border);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.text-error {
+  color: #ff5252;
+  font-size: 0.9rem;
 }
 </style>
