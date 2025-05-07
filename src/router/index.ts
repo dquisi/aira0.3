@@ -9,6 +9,10 @@ import { BaseApiService } from '@/services/BaseApiService'
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    redirect: '/chat'
+  },
+  {
+    path: '/home',
     name: 'Home',
     component: HomeView
   },
@@ -74,15 +78,15 @@ router.beforeEach(async (to, from, next) => {
       // Si existen parámetros de autenticación, verificar permisos
       if (id && data) {
         await BaseApiService.getParamsFromUrl()
-        // Si no está autorizado, redirigir al home
+        // Si no está autorizado, redirigir a la página home
         if (!isAuthorized(to.meta.roles as string[])) {
-          return next('/')
+          return next('/home')
         }
       } else {
-        return next('/')
+        return next('/home')
       }
     } catch (err) {
-      return next('/')
+      return next('/home')
     }
   }
   next()

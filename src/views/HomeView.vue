@@ -1,4 +1,3 @@
-
 <template>
   <div class="home-container">
     <div class="logo-container">
@@ -29,6 +28,11 @@
           <p v-if="hasPermissions" class="user-role">{{ t('home.role') }}: {{ userRole }}</p>
         </div>
       </div>
+    </div>
+    <div class="action-container">
+      <button class="btn-primary" @click="$router.push(hasPermissions ? '/chat' : '/home')">
+        {{ t('home.startChat') }}
+      </button>
     </div>
   </div>
 </template>
