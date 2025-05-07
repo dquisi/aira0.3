@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="card-body">
-          <p class="card-text">{{ p.value }}</p>
+          <p class="card-text">{{ truncateText(p.value, 150) }}</p>
           <div class="flex gap-1 flex-wrap">
             <span v-for="tag in p.tags" :key="tag" class="tag">{{ tag }}</span>
           </div>
@@ -298,6 +298,12 @@ function getCat(p: Prompt) {
 }
 function formatDate(s: string) {
   return s ? new Date(s).toLocaleString() : '';
+}
+
+function truncateText(text: string, maxLength: number) {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
 }
 // --- CARGA DE DATOS ---
 async function loadData() {
