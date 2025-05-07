@@ -52,6 +52,11 @@ router.beforeEach(async (to, from, next) => {
   const id = originalParams.get('id') || ''
   const data = originalParams.get('data') || ''
 
+  // Si la ruta es raíz, redireccionar a /chat sin entrar en bucle
+  if (to.path === '/' && from.path !== '/chat') {
+    return next('/chat')
+  }
+
   // No forzar los parámetros id y data si no existen
   // pero mantenerlos si están presentes en la URL
   if ((id || data) && (to.query.id !== id || to.query.data !== data)) {
