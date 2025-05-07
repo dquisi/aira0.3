@@ -89,17 +89,7 @@
           <!-- FORMULARIO -->
           <template v-if="modal.type === 'form'">
             <div class="form-group">
-              <label>{{ t('prompts.form.title') }}</label>
-              <input type="text" v-model="modal.prompt.name" class="form-control"
-                :placeholder="t('prompts.promptTitle')" />
-            </div>
-            <div class="form-group">
-              <label>{{ t('prompts.form.content') }}</label>
-              <textarea v-model="modal.prompt.value" rows="5" class="form-control"
-                :placeholder="t('prompts.promptContent')"></textarea>
-            </div>
-            <div class="form-group">
-              <label>{{ t('prompts.form.category') }}</label>
+              <label>{{ t('prompts.form.category') }} *</label>
               <v-select v-model="modal.prompt.category_id" :options="categoryOptions" :reduce="o => o.id"
                 :placeholder="t('prompts.filter')">
                 <template #option="{ label, color }">
@@ -115,8 +105,33 @@
                   </div>
                 </template>
               </v-select>
+              <div v-if="!modal.prompt.category_id" class="text-error">
+                {{ t('prompts.form.category') + ' ' + t('common.required') }}
+              </div>
             </div>
-
+            <div class="form-group">
+              <label>{{ t('prompts.form.title') }} *</label>
+              <input type="text" v-model="modal.prompt.name" class="form-control"
+                :placeholder="t('prompts.promptTitle')" />
+              <div v-if="!modal.prompt.name?.trim()" class="text-error">
+                {{ t('prompts.form.title') + ' ' + t('common.required') }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label>{{ t('prompts.form.content') }} *</label>
+              <textarea v-model="modal.prompt.value" rows="5" class="form-control"
+                :placeholder="t('prompts.promptContent')"></textarea>
+              <div v-if="!modal.prompt.value?.trim()" class="text-error">
+                {{ t('prompts.form.content') + ' ' + t('common.required') }}
+              </div>
+            </div>
+            <div class="form-group favorite-toggle">
+              <label>{{ t('prompts.card.favorite') }}</label>
+              <label class="switch">
+                <input type="checkbox" v-model="modal.prompt.is_favorite">
+                <span class="slider round"></span>
+              </label>
+            </div>
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
@@ -356,7 +371,7 @@ function openForm(p?: Prompt) {
   modal.isOpen = true;
   modal.prompt = p
     ? { ...p }
-    : { name: '', value: '', category_id: state.categories[0]?.id };
+    : { name: '', value: '', category_id: state.categories[0]?.id, is_favorite: false };
   modal.newTag = '';
   modal.params = [];
 }
@@ -398,7 +413,7 @@ async function save() {
     showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
     return;
   }
-  
+
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);
@@ -450,7 +465,8 @@ function useSyllabus(s: { title: string; content: string; tags: string[] }) {
     name: s.title,
     value: s.content,
     tags: s.tags,
-    category_id: state.categories[0]?.id
+    category_id: state.categories[0]?.id,
+    is_favorite: false
   };
   closeModal();
   openForm();
@@ -511,5 +527,69 @@ watch(
 
 .card {
   padding-top: 8px;
+}
+
+.text-error {
+  color: #ff5252;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.favorite-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-border);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
