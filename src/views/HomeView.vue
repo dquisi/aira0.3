@@ -6,6 +6,20 @@
       <h1 class="app-title">AIRA</h1>
     </div>
 
+
+
+    <div class="intro-container">
+      <h2>{{ t('home.welcomeTitle') }}</h2>
+      <div class="intro-content">
+        <p v-html="t('home.welcomeText')"></p>
+      </div>
+    </div>
+
+    <div class="action-container" v-if="isTokenValid && hasPermissions">
+      <button class="btn-primary" @click="goToChat">
+        <i class="bi bi-chat-dots"></i> {{ t('home.startChat') }}
+      </button>
+    </div>
     <div class="status-container">
       <div class="status-card" :class="{ 'status-error': !isTokenValid, 'status-success': isTokenValid }">
         <i class="bi" :class="isTokenValid ? 'bi-check-circle' : 'bi-x-circle'"></i>
@@ -23,19 +37,6 @@
           <p v-if="hasPermissions" class="user-role">{{ t('home.role') }}: {{ userRole }}</p>
         </div>
       </div>
-    </div>
-
-    <div class="intro-container">
-      <h2>{{ t('home.welcomeTitle') }}</h2>
-      <div class="intro-content">
-        <p v-html="t('home.welcomeText')"></p>
-      </div>
-    </div>
-
-    <div class="action-container" v-if="isTokenValid && hasPermissions">
-      <button class="btn-primary" @click="goToChat">
-        <i class="bi bi-chat-dots"></i> {{ t('home.startChat') }}
-      </button>
     </div>
   </div>
 </template>
@@ -59,9 +60,9 @@ onMounted(async () => {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  
+
   isTokenValid.value = !!id && !!data && id !== '' && data !== ''
-  
+
   if (isTokenValid.value) {
     try {
       // Verificar permisos
@@ -78,7 +79,7 @@ function goToChat() {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  
+
   router.push({
     path: '/chat',
     query: { id, data }

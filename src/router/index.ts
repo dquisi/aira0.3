@@ -53,7 +53,6 @@ router.beforeEach(async (to, from, next) => {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  
   // Si estamos en la página de inicio, no se requiere verificación previa
   if (to.path === '/') {
     return next()
