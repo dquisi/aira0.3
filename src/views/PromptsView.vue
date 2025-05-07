@@ -297,7 +297,7 @@ async function loadData() {
     }
     await loadAllPrompts();
   } catch (e) {
-    handleError(e, t('errors.loadData'));
+    handleError(e, t('common.noData'));
   } finally {
     state.loading = false;
   }
@@ -323,7 +323,7 @@ async function loadAllPrompts() {
     }
     state.prompts = allPrompts;
   } catch (e) {
-    handleError(e, t('errors.loadPrompts'));
+    handleError(e, t('common.noData'));
   }
 }
 // --- ACCIONES DE TARJETA ---
@@ -337,7 +337,7 @@ async function toggleFav(p: Prompt) {
     await promptService.toggleFavorite(p);
     p.is_favorite = !p.is_favorite;
   } catch (e) {
-    handleError(e, t('errors.toggleFav'));
+    handleError(e, t('common.error'));
   }
 }
 function usePrompt(p: Prompt) {
@@ -386,30 +386,30 @@ function closeModalAndReload() {
 
 async function save() {
   if (!isFormValid.value) {
-    showNotification(t('prompts.error'), 'error');
+    showNotification(t('common.error'), 'Campos invalidos');
     return
   }
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);
-      showNotification(t('prompts.updateSuccess'), 'success');
+      showNotification(t('common.updated'), 'success');
     } else {
       await promptService.create(modal.prompt);
-      showNotification(t('prompts.createSuccess'), 'success');
+      showNotification(t('common.created'), 'success');
     }
     closeModalAndReload();
   } catch (e) {
-    handleError(e, t('errors.save'));
+    handleError(e, t('common.error'));
   }
 }
 async function remove() {
   if (!modal.prompt.id) return;
   try {
     await promptService.remove(modal.prompt.id);
-    showNotification(t('prompts.deleteSuccess'), 'success');
+    showNotification(t('common.deleted'), 'success');
     closeModalAndReload();
   } catch (e) {
-    handleError(e, t('errors.delete'));
+    handleError(e, t('common.error'));
   }
 }
 function sendVariables() {
@@ -484,15 +484,15 @@ watch(
 
 .category-badge {
   position: absolute;
-  top: 10px;
+  top: 5px;
   right: 10px;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 400;
   z-index: 2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 120px;
+  max-width: 260px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
