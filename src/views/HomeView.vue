@@ -8,7 +8,8 @@
     <div class="intro-container">
       <h2>{{ t('home.welcomeTitle') }}</h2>
       <div class="intro-content">
-        <p v-html="t('home.welcomeText')"></p>
+        <!-- Usamos una clase específica para contenido confiable -->
+        <div class="trusted-content" v-html="$t('home.welcomeText')"></div>
       </div>
     </div>
     <div class="status-container">
@@ -168,8 +169,9 @@ onMounted(async () => {
   line-height: 1.6;
 }
 
-.intro-content p {
+.intro-content .trusted-content {
   margin-bottom: 1rem;
+  white-space: pre-line; /* Esto preserva los saltos de línea \n */
 }
 
 .action-container {

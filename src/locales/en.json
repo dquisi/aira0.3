@@ -232,7 +232,7 @@
   "home": {
     "title": "Home",
     "welcomeTitle": "Welcome to AIRA",
-    "welcomeText": "AIRA (Agent Intelligent Networking Academic of CEDIA) is an AI-powered educational platform designed to support personalized learning.<br><br>With AIRA, you can access a virtual assistant that answers questions, generates educational content, and helps you organize your learning tasks. The platform is designed to adapt to different roles and needs within the educational environment.<br><br>Explore the different functionalities according to your role and make the most of this innovative tool to enhance your educational experience.",
+    "welcomeText": "AIRA (Agent Intelligent Networking Academic of CEDIA) is an AI-powered educational platform designed to support personalized learning.\n\nWith AIRA, you can access a virtual assistant that answers questions, generates educational content, and helps you organize your learning tasks. The platform is designed to adapt to different roles and needs within the educational environment.\n\nExplore the different functionalities according to your role and make the most of this innovative tool to enhance your educational experience.",
     "startChat": "Start Chat",
     "tokenStatus": "Status",
     "tokenValid": "Successfully authenticated",

@@ -267,7 +267,7 @@
   "home": {
     "title": "Inicio",
     "welcomeTitle": "Bienvenido a AIRA",
-    "welcomeText": "AIRA (Agente Inteligente de Redes Academicas de CEDIA) es una plataforma educativa impulsada por inteligencia artificial diseñada para apoyar el aprendizaje personalizado.<br><br>Con AIRA, puedes acceder a un asistente virtual que responde preguntas, genera contenido educativo y te ayuda a organizar tus tareas de aprendizaje. La plataforma está diseñada para adaptarse a diferentes roles y necesidades dentro del entorno educativo.<br><br>Explora las diferentes funcionalidades según tu rol y aprovecha al máximo esta herramienta innovadora para mejorar tu experiencia educativa.",
+    "welcomeText": "AIRA (Agente Inteligente de Redes Academicas de CEDIA) es una plataforma educativa impulsada por inteligencia artificial diseñada para apoyar el aprendizaje personalizado.\n\nCon AIRA, puedes acceder a un asistente virtual que responde preguntas, genera contenido educativo y te ayuda a organizar tus tareas de aprendizaje. La plataforma está diseñada para adaptarse a diferentes roles y necesidades dentro del entorno educativo.\n\nExplora las diferentes funcionalidades según tu rol y aprovecha al máximo esta herramienta innovadora para mejorar tu experiencia educativa.",
     "startChat": "Iniciar Chat",
     "tokenStatus": "Estado",
     "tokenValid": "Acceso exitoso",
