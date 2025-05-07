@@ -4,7 +4,7 @@
       <div class="generator-options">
         <!-- Selección de categoría -->
         <div class="form-group">
-          <label>{{ t('prompts.generator.category') }}</label>
+          <label>{{ t('prompts.generator.category') }} *</label>
           <div class="category-select-container">
             <v-select class="category-filter" v-model="selectedCategory" :options="categoryOptions"
               :placeholder="t('prompts.filter')">
@@ -25,11 +25,11 @@
         </div>
         <!-- Instrucciones -->
         <div class="form-group">
-          <label>{{ t('prompts.generator.instructions') }}</label>
+          <label>{{ t('prompts.generator.instructions') }} *</label>
           <textarea v-model="instructions" class="form-control" rows="6"
             :placeholder="t('prompts.generator.instructionsPlaceholder')"></textarea>
         </div>
-        
+
         <!-- Plantillas de prueba -->
         <div class="generator-templates">
           <p class="templates-title">{{ t('prompts.generator.tryIt') }}</p>
@@ -93,7 +93,7 @@
       <button class="btn-secondary" @click="$emit('close')">
         {{ t('common.cancel') }}
       </button>
-      <button class="btn-primary" @click="generatePrompt" :disabled="!instructions.trim() || isGenerating">
+      <button class="btn-primary" @click="generatePrompt">
         <i class="bi bi-magic" v-if="!isGenerating"></i>
         <div class="spinner-sm" v-else></div>
         {{ isGenerating
@@ -180,13 +180,13 @@ const generatePrompt = async () => {
     showNotification(t('common.requiredField', { field: t('prompts.generator.instructions') }), 'error');
     return;
   }
-  
+
   isGenerating.value = true;
   try {
     generatedPrompt.value = await promptService.generatePrompt(instructions.value);
   } catch (error) {
-    handleError(error, t('prompts.generator.generateError'));
-  } finally {
+    handleError(error, t('common.error'));
+  } finally {  
     isGenerating.value = false;
   }
 };
@@ -196,17 +196,17 @@ const savePromptDirectly = async () => {
     showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
     return;
   }
-  
+
   if (!promptName.value.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
     return;
   }
-  
+
   if (!generatedPrompt.value.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
-  
+
   isSaving.value = true;
   try {
     // Si no se proporciona un nombre, usar los primeros 3 palabras del prompt como título
@@ -214,7 +214,7 @@ const savePromptDirectly = async () => {
       const words = generatedPrompt.value.trim().split(/\s+/);
       return words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
     })();
-    
+
     const payload = {
       name: name,
       value: generatedPrompt.value,
@@ -222,7 +222,7 @@ const savePromptDirectly = async () => {
       category_id: selectedCategory.value?.value,
       is_favorite: isFavorite.value
     };
-    
+
     const saved = await promptService.create(payload);
     emit('generated', { ...saved, saved: true });
     emit('close');
@@ -332,11 +332,11 @@ onMounted(loadCategories);
   transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: var(--primary-color);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(20px);
 }
 

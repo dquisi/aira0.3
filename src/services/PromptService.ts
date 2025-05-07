@@ -264,7 +264,9 @@ class PromptService extends BaseApiService {
         response_mode: 'blocking',
         user: `${BaseApiService.getUserId()}`
       }
+      console.log(payload)
       const response = await this.post(apiUrl, payload)
+      console.log(response)
       if (!response || !response.data || !response.data.outputs || !response.data.outputs.result) {
         throw new Error('Respuesta inválida del servidor')
       }

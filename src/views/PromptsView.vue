@@ -387,17 +387,14 @@ async function save() {
     showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
     return;
   }
-
   if (!modal.prompt.name?.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
     return;
   }
-
   if (!modal.prompt.value?.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
-
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);
@@ -493,15 +490,5 @@ watch(
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
-}
-
-.card {
-  padding-top: 8px;
-}
-
-.tag {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
 }
 </style>

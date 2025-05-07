@@ -175,6 +175,8 @@
       "allowedFormats": "Formatos Permitidos: PDF, DOCX, DOC, PPT, PPTX, CSV, XLS",
       "generating": "Generando ...",
       "generate": "Generar",
+      "result": "Silabo generado, revisar el ELSA GML accediendo al link.",
+      "generated": "Generado",
       "invalidateFile": "Archivo inválido"
     }
   },

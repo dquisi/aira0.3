@@ -77,11 +77,11 @@
         </header>
         <div class="modal-body">
           <div class="form-group">
-            <label>{{ t('events.name') }}</label>
+            <label>{{ t('events.name') }} *</label>
             <input v-model="currentEvent.name" type="text" class="form-control" required />
           </div>
           <div class="form-group">
-            <label>{{ t('events.prompt') }}</label>
+            <label>{{ t('events.prompt') }} *</label>
             <v-select v-model="currentEvent.prompt_id" :options="promptOptions" :reduce="o => o.id"
               @update:modelValue="onPromptChange" />
           </div>
@@ -421,7 +421,7 @@ async function saveEvent() {
     } else {
       delete currentEvent.value.next_execution
     }
-    
+
     if (editMode.value && currentEvent.value.id) {
       await eventService.update(currentEvent.value as Event)
       showNotification(t('common.updated'), 'success')
