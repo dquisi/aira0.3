@@ -120,7 +120,7 @@
       "content": "Contenido",
       "category": "Categoría",
       "tags": "Etiquetas",
-      "addTag": "Agregar etiqueta"
+      "addTag": "Para agregar etiqueta solo da un enter después de escribir la etiqueta"
     },
     "card": {
       "favorite": "Favorito",

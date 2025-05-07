@@ -21,7 +21,7 @@
             </div>
           </template>
           <template #no-options>
-            <span>{{t('categories.empty')}}</span>
+            <span>{{ t('categories.empty') }}</span>
           </template>
         </v-select>
         <button class="btn-secondary" :class="{ active: filters.favorites }"
@@ -135,8 +135,8 @@
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
-            <h3>{{ t('prompts.form.title') }}: {{ modal.prompt.name }}</h3>
-            <h4>{{ t('prompts.form.content') }}: {{ modal.prompt.value }}</h4>
+            <h3>{{ t('prompts.form.title') }}: </h3>{{ modal.prompt.name }}
+            <h4>{{ t('prompts.form.content') }}: </h4>{{ modal.prompt.value }}
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1">
                 <strong>{{ t('prompts.form.category') }}:</strong>

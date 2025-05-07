@@ -120,7 +120,7 @@
       "content": "Content",
       "category": "Category",
       "tags": "Tags",
-      "addTag": "Add tag"
+      "addTag": "Add tag pulse intro to add a new tag"
     },
     "card": {
       "favorite": "Favorite",
