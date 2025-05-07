@@ -17,37 +17,27 @@ class PromptService extends BaseApiService {
 
   async search(criteria: Record<string, any>): Promise<{ answer: Prompt[]; total: number }> {
     try {
-      // Asegurar que existan los filtros
       const filters = criteria.filters || []
-
-      // Añadir filtros requeridos para moodle_course_id y moodle_user_id
       const filter = [
         ...filters,
         { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
         { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
       ]
 
-      // Parámetros de búsqueda con paginación
       const searchParams = {
-        skip: parseInt(criteria.skip) || 0,
-        limit: parseInt(criteria.limit) || 10,
+        skip: parseInt(String(criteria.skip)) || 0,
+        limit: parseInt(String(criteria.limit)) || 10,
         filters: filter,
-        // Añadir ordenamiento para consistencia en los resultados paginados
         sort: [{ field: 'created_at', direction: 'desc' }]
       }
 
-      // Realizar solicitud a la API
       const result = await this.post('/api/v1/prompt/search', searchParams)
 
-      // Normalizar la respuesta
-      const response = {
+      return {
         answer: Array.isArray(result.answer) ? result.answer : [],
-        total: typeof result.total === 'number' ? result.total : result.answer?.length || 0
+        total: typeof result.total === 'number' ? result.total : (result.answer?.length || 0)
       }
-
-      return response
     } catch (error) {
-      console.error('Error en búsqueda de prompts:', error)
       return { answer: [], total: 0 }
     }
   }

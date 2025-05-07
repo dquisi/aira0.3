@@ -292,7 +292,6 @@ function truncateText(text: string, maxLength: number) {
 async function loadData() {
   state.loading = true;
   try {
-    // Cargar categorías si aún no existen
     if (!state.categories.length) {
       const cats = await categoryService.getAll();
       state.categories = cats.map(c => ({
@@ -303,30 +302,23 @@ async function loadData() {
       }));
     }
     
-    // Reiniciar estado para nueva carga
     state.prompts = [];
     state.hasMore = true;
     
-    // Cargar primeros elementos
     await loadMore();
   } catch (e) {
     handleError(e, t('errors.loadData'));
   } finally {
     state.loading = false;
-    // Asegurar que el observer se configure después de cargar los datos iniciales
-    nextTick(() => {
-      setupObserver();
-    });
+    nextTick(setupObserver);
   }
 }
 
 async function loadMore() {
-  // No cargar más si ya está cargando o no hay más elementos
   if (state.loadingMore || !state.hasMore) return;
   
   state.loadingMore = true;
   try {
-    // Construir filtros según los criterios seleccionados
     const fltrs: any[] = [];
     if (filters.query) fltrs.push({ field: 'name', operator: 'ilike', value: `%${filters.query}%` });
     if (filters.category) fltrs.push({ field: 'category_id', operator: '=', value: filters.category.id });
@@ -340,15 +332,12 @@ async function loadMore() {
     
     const items = res.answer || [];
     
-    // Añadir los nuevos elementos al array
     if (items.length > 0) {
       state.prompts.push(...items);
     }
     
-    // Determinar si hay más elementos para cargar
-    state.hasMore = items.length === 10 && res.total > state.prompts.length;
+    state.hasMore = items.length > 0 && res.total > state.prompts.length;
     
-    // Si no hay más elementos, desconectar el observer
     if (!state.hasMore) {
       observer.value?.disconnect();
     }
@@ -358,7 +347,6 @@ async function loadMore() {
     state.loadingMore = false;
   }
 }
-// --- OBSERVER PARA INFINITE SCROLL ---
 const observer = ref<IntersectionObserver>();
 const observerEl = ref<HTMLElement>();
 function setupObserver() {
@@ -368,7 +356,7 @@ function setupObserver() {
     if (entries[0].isIntersecting && state.hasMore && !state.loadingMore) {
       loadMore();
     }
-  }, { rootMargin: '0px 0px 200px 0px', threshold: 0.1 });
+  }, { rootMargin: '0px 0px 300px 0px', threshold: 0.1 });
   
   nextTick(() => {
     if (observerEl.value) {
