@@ -53,9 +53,11 @@
               <button class="copy-btn" @click="copyToClipboard(message.content)" title="Copiar al portapapeles">
                 <i class="bi bi-clipboard"></i>
               </button>
+              <button class="btn-icon" @click="sendMessage($t('chats.graphics'))" title="Generar gráficos">
+                <i class="bi bi-graph-up"></i>
+              </button>
             </div>
             <div v-if="message.sender === 'assistant'" class="markdown-content">
-              <!-- Procesar contenido markdown -->
               <div v-if="message.isTemporary" class="processing-message">
                 <div v-html="renderMarkdown(message.content)"></div>
                 <div class="processing-indicator">
@@ -63,8 +65,6 @@
                 </div>
               </div>
               <div v-else v-html="renderMarkdown(message.content)"></div>
-
-              <!-- Mostrar adjuntos inmediatamente después del contenido -->
               <div v-if="message.attachments && message.attachments.length" class="attachments">
                 <div v-for="(attachment, i) in message.attachments" :key="i" class="file-preview assistant-attachment"
                   @click="openAttachment(attachment)">
@@ -141,6 +141,20 @@
           <button class="btn-icon" @click="sendMessage($t('chats.help'))" title="Ayuda">
             <i class="bi bi-question-circle"></i>
           </button>
+          <div class="dropdown">
+            <button class="btn-icon" @click="showFavoritePrompts = !showFavoritePrompts">
+              <i class="bi bi-bookmark-heart"></i>
+            </button>
+            <div v-if="showFavoritePrompts" class="dropdown-menu">
+              <ul class="favorite-prompts-list" v-if="favoritePrompts.length > 0">
+                <li v-for="prompt in favoritePrompts" :key="prompt.id" class="favorite-prompt-item"
+                  @click="usePrompt(prompt)">
+                  {{ prompt.name }}
+                </li>
+              </ul>
+              <p v-else class="no-favorites">No hay prompts favoritos aún.</p>
+            </div>
+          </div>
           <button class="btn-icon" @click="triggerFileInput"
             :disabled="audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-paperclip"></i>
@@ -151,21 +165,6 @@
             :disabled="!canSendMessage || isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-send"></i>
           </button>
-          <div class="dropdown">
-            <button class="btn-icon" @click="showFavoritePrompts = !showFavoritePrompts">
-              <i class="bi bi-bookmark-heart"></i>
-            </button>
-            <div v-if="showFavoritePrompts" class="dropdown-menu">
-              <ul class="favorite-prompts-list" v-if="favoritePrompts.length > 0">
-                <li v-for="prompt in favoritePrompts" :key="prompt.id" class="favorite-prompt-item"
-                  @click="usePrompt(prompt)">
-                  {{ prompt.value }}
-                  <span class="prompt-usage">({{ prompt.usage_count }} usos)</span>
-                </li>
-              </ul>
-              <p v-else class="no-favorites">No hay prompts favoritos aún.</p>
-            </div>
-          </div>
         </div>
         <div v-if="selectedFiles.length" class="selected-files">
           <div v-for="(file, index) in selectedFiles" :key="index" class="file-preview">
@@ -218,8 +217,9 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { marked } from 'marked'
 import 'highlight.js/styles/github.css'
 import ChatService from '@/services/ChatService'
+import promptService from '@/services/PromptService'
 import ChatHistory from '@/components/ChatHistory.vue'
-import type { Message, FileAttachment } from '@/types'
+import { Message, FileAttachment, Prompt } from '@/types'
 import { handleError, showNotification } from '@/utils/notifications'
 const chatService = ChatService.getInstance()
 const messages = ref<Message[]>([])
@@ -235,6 +235,11 @@ const showImageModal = ref(false)
 const currentImage = ref<any>(null)
 const isImageZoomed = ref(false)
 const apiIntegrationId = ref(null)
+const isRecording = ref(false)
+const lastMessage = ref('')
+const favoritePrompts = ref<Prompt[]>([])
+const showFavoritePrompts = ref(false)
+
 const audioState = ref({
   status: 'idle',
   currentMessageId: '',
@@ -702,12 +707,6 @@ const getFilePreviewUrl = (file: any) => {
   }
   return file.url || ''
 }
-const isRecording = ref(false)
-const lastMessage = ref('')
-
-// Funcionalidad de prompts favoritos
-const favoritePrompts = ref<Prompt[]>([])
-const showFavoritePrompts = ref(false)
 
 onMounted(async () => {
   await loadFavoritePrompts()
@@ -715,36 +714,23 @@ onMounted(async () => {
 
 const loadFavoritePrompts = async () => {
   try {
-    const promptService = (await import('@/services/PromptService')).default
-    const allPrompts = await promptService.getAll()
-
-    // Filtrar solo los favoritos sin variables
-    const favoritesWithoutVars = allPrompts
-      .filter(p => p.is_favorite && !containsVariables(p.value))
-      .sort((a, b) => b.usage_count - a.usage_count)
-      .slice(0, 10)
-
-    favoritePrompts.value = favoritesWithoutVars
+    const allPrompts = await promptService.search({
+      skip: 0,
+      limit: 10,
+      filters: [
+        { field: 'is_favorite', operator: '=', value: true }
+      ]
+    })
+    favoritePrompts.value = allPrompts.answer
   } catch (error) {
     console.error('Error cargando prompts favoritos:', error)
   }
 }
 
-const containsVariables = (text: string): boolean => {
-  return /\[(.*?)\]/.test(text)
-}
-
 const usePrompt = async (prompt: Prompt) => {
   try {
     inputMessage.value = prompt.value
-
-    // Incrementar contador de uso
-    const promptService = (await import('@/services/PromptService')).default
-    if (prompt.id) {
-      await promptService.incrementUsageCount(prompt.id)
-      // Actualizar la lista de favoritos
-      await loadFavoritePrompts()
-    }
+    //sendMessage(prompt.value)
   } catch (error) {
     console.error('Error al usar el prompt:', error)
   }
@@ -752,7 +738,6 @@ const usePrompt = async (prompt: Prompt) => {
 </script>
 
 <style scoped>
-/* Estilos para dropdown de prompts favoritos */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -803,17 +788,5 @@ const usePrompt = async (prompt: Prompt) => {
 
 .favorite-prompt-item:hover {
   background-color: var(--hover-color);
-}
-
-.prompt-usage {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  margin-left: 8px;
-}
-
-.no-favorites {
-  padding: 12px;
-  text-align: center;
-  color: var(--text-muted);
 }
 </style>

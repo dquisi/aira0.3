@@ -11,10 +11,10 @@
       "spanish": "Spanish"
     },
     "theme": {
-      "toggle": "Toggle theme",
+      "toggle": "Toggle Theme",
       "light": "Light",
       "dark": "Dark",
-      "highContrast": "High contrast"
+      "highContrast": "High Contrast"
     }
   },
   "display": {
@@ -24,12 +24,12 @@
     },
     "theme": {
       "light": "Light",
-      "highContrast": "High contrast"
+      "highContrast": "High Contrast"
     }
   },
   "themes": {
     "light": "Light",
-    "highContrast": "High contrast"
+    "highContrast": "High Contrast"
   },
   "navigation": {
     "Chat": "Chat",
@@ -99,7 +99,7 @@
     "loadMore": "Load more",
     "addPrompt": "Add Prompt",
     "promptTitle": "Prompt Title",
-    "promptContent": "Add the prompt instructions, you can include variables using brackets [], which allows you to change variable data each time you run it.",
+    "promptContent": "Add the prompt instructions; you can include variables using brackets [], which lets you change them each time you run it.",
     "category": "Category",
     "noCategory": "No category",
     "variables": "Variables",
@@ -120,7 +120,7 @@
       "content": "Content",
       "category": "Category",
       "tags": "Tags",
-      "addTag": "Add tag pulse intro to add a new tag"
+      "addTag": "Press enter after typing a tag to add it"
     },
     "card": {
       "favorite": "Favorite",
@@ -131,21 +131,21 @@
       "title": "Prompt Generator",
       "category": "Category",
       "instructions": "Instructions",
-      "instructionsPlaceholder": "Describe what type of prompt you need to generate...",
+      "instructionsPlaceholder": "Describe what kind of prompt you need to generate...",
       "generate": "Generate",
       "generating": "Generating...",
       "preview": "Preview",
       "emptyPreview": "Type instructions and generate a prompt to see the preview here.",
       "regenerate": "Regenerate",
-      "tryIt": "Try:",
+      "tryIt": "Try with:",
       "saveError": "Error saving prompt",
       "templates": {
-        "Examen": "I need a prompt to generate exam questions: multiple choice, essay, and practical cases for a university course.",
-        "Retroalimentacion": "I want a prompt to provide detailed and constructive feedback on students' work.",
-        "Rubrica": "I need a prompt to create clear and objective assessment rubrics for different types of academic work.",
+        "Examen": "I need a prompt to generate multiple-choice, essay, and case-study questions for a university course exam.",
+        "Retroalimentacion": "I want a prompt to provide detailed, constructive feedback on students’ assignments.",
+        "Rubrica": "I need a prompt to create clear, objective evaluation rubrics for different types of academic work.",
         "Explicacion": "I want a prompt to explain complex concepts simply to university students, with analogies and practical examples.",
-        "Ejercicios": "I need a prompt to design practical and challenging exercises to reinforce student learning.",
-        "Investigacion": "I want a prompt to guide students in designing research projects, with methodology and structure."
+        "Ejercicios": "I need a prompt to design practical, challenging exercises to reinforce student learning.",
+        "Investigacion": "I want a prompt to guide students in designing research projects, including methodology and structure."
       }
     },
     "importExport": {
@@ -159,52 +159,53 @@
       "selectAll": "Select all",
       "deselectAll": "Deselect all",
       "noData": "No prompts to export",
-      "dropzone": "Drag and drop a JSON file here, or click to select a file",
+      "dropzone": "Drag and drop a JSON file here, or click to select one",
       "jsonFormat": "File format: JSON"
     },
     "syllabus": {
-      "title": "Syllabus Configuration",
+      "title": "Syllabus Settings",
       "periods": "Number of periods",
       "daysPerPeriod": "Days per period",
       "initDate": "Start date",
       "document": "Syllabus document (optional)",
       "upload": "Upload PDF",
-      "info": "This generates the syllabus based on the file information or current course settings.",
-      "warning": "If you want to regenerate, you must delete the current configuration and generate again.",
+      "info": "This generates the syllabus based on the file or current course settings.",
+      "warning": "To regenerate, you must delete the current settings and start over.",
       "noFileSelected": "Select a file",
       "allowedFormats": "Allowed formats: PDF, DOCX, DOC, PPT, PPTX, CSV, XLS",
       "generating": "Generating...",
       "generate": "Generate",
+      "result": "Syllabus generated; review in ELSA GML via the link.",
+      "generated": "Generated",
       "invalidateFile": "Invalid file"
     }
   },
   "events": {
     "title": "Events",
-    "help": "Hello, who are you? Could you list all your capabilities?",
     "name": "Event Name",
     "status": "Status",
     "prompt": "Prompt",
     "selectPrompt": "Select a prompt",
     "schedule": "Schedule",
-    "scheduleType": "Schedule type",
-    "singleExecution": "Single execution",
-    "recurringExecution": "Recurring execution",
-    "executionDate": "Execution date",
-    "cronExpression": "Cron expression",
-    "customCron": "Custom scheduling",
+    "scheduleType": "Schedule Type",
+    "singleExecution": "Single Execution",
+    "recurringExecution": "Recurring Execution",
+    "executionDate": "Execution Date",
+    "cronExpression": "Cron Expression",
+    "customCron": "Custom Schedule",
     "everyHour": "Every hour",
     "everyDay": "Daily",
-    "everyWeek": "Every week",
+    "everyWeek": "Weekly",
     "everyMonth": "First day of each month",
-    "cronHelp": "Cron expressions follow the format: minute hour day-of-month month day-of-week",
-    "nextExecution": "Next execution",
-    "endDate": "End date",
+    "cronHelp": "Cron expressions use the format: minute hour day-of-month month day-of-week",
+    "nextExecution": "Next Execution",
+    "endDate": "End Date",
     "active": "Active",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "parameters": "Parameters",
-    "promptParameters": "Prompt parameters",
-    "noParameters": "This event has no configured parameters.",
+    "promptParameters": "Prompt Parameters",
+    "noParameters": "This event has no parameters configured.",
     "pending": "Pending",
     "scheduled": "Scheduled",
     "running": "Running",
@@ -213,7 +214,7 @@
     "enterValue": "Enter value for {param}",
     "parameterHelp": "This value will replace the parameter in the prompt",
     "noParametersDetected": "No parameters detected in the selected prompt.",
-    "errorExtractingParameters": "Error extracting parameters from prompt",
+    "errorExtractingParameters": "Error extracting parameters from the prompt",
     "everyXMinutes": "Every {minutes} minutes",
     "everyXHours": "Every {hours} hours",
     "atMinute": "At minute {minute}",
@@ -225,45 +226,7 @@
     "inactiveOnly": "Inactive only",
     "promptValue": "Prompt value",
     "everyNoon": "Every day at noon",
-    "twiceDaily": "Twice daily",
+    "twiceDaily": "Twice a day",
     "workingHours": "During working hours"
-  },
-  "chats": {
-    "title": "Chat",
-    "history": {
-      "title": "History",
-      "new": "New Chat",
-      "loading": "Loading...",
-      "empty": "No chats available"
-    },
-    "config": {
-      "title": "Configuration",
-      "section": "Section",
-      "allSections": "All sections",
-      "resource": "Resource",
-      "allResources": "All resources",
-      "agentType": "Agent type",
-      "agentContent": "Content Agent",
-      "agentAnalytics": "Analytics Agent",
-      "apply": "Apply",
-      "close": "Close",
-      "notAvailable": "Configuration is not available for your role."
-    },
-    "welcome": {
-      "title": "Welcome!",
-      "message": "How can I help you today?"
-    },
-    "input": {
-      "placeholder": "Type a message..."
-    },
-    "audio": "Listen to message",
-    "copy": "Copy to clipboard",
-    "deleteWarning": "Are you sure you want to delete?",
-    "errorLoad": "Error loading conversation",
-    "errorSend": "Error sending message",
-    "errorSpeech": "Could not process audio",
-    "errorMic": "Could not access microphone",
-    "errorAudio": "Error playing audio",
-    "copySuccess": "Text copied"
   }
 }

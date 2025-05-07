@@ -261,6 +261,7 @@
     "errorSpeech": "No se pudo procesar el audio",
     "errorMic": "No se pudo acceder al micrófono",
     "errorAudio": "Error al reproducir el audio",
-    "copySuccess": "Texto copiado"
+    "copySuccess": "Texto copiado",
+    "graphics": "Genera una grafica de los datos"
   }
 }

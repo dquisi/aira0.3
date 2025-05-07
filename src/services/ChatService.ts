@@ -65,6 +65,7 @@ class ChatService extends BaseApiService {
       const url = `/api/v1/middleware/${apiIntegrationId}/v1/messages`
       const result = await this.get(url, { params })
       if (!result?.data) return []
+      console.log(result.data)
       return result.data
         .map((msg: any) => ({
           content: msg.query || msg.answer || '',
@@ -96,8 +97,7 @@ class ChatService extends BaseApiService {
     const payload = {
       inputs: {
         moodle_course_id: String(BaseApiService.moodle_course_id),
-        moodle_user_id: String(BaseApiService.moodle_user_id),
-        moodle_resource_id: String(inputsParams.moodle_resource_id ?? '')
+        moodle_user_id: String(BaseApiService.moodle_user_id)
       },
       query: message,
       response_mode: 'streaming',

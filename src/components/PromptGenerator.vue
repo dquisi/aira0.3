@@ -53,8 +53,7 @@
           </div>
         </div>
         <div v-else class="preview-placeholder">
-          <div class="placeholder-icon"><i class="bi bi-stars"></i></div>
-          <p>{{ t('prompts.generator.emptyPreview') }}</p>
+          <p><i class="bi bi-stars"></i> {{ t('prompts.generator.emptyPreview') }}</p>
         </div>
       </div>
     </div>
