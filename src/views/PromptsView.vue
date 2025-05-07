@@ -163,7 +163,7 @@
           </template>
           <!-- GENERADOR DE PROMPTS -->
           <template v-else-if="modal.type === 'generator'">
-            <PromptGenerator @close="closeModal" @generated="useGenerated" />
+            <PromptGenerator @generated="useGenerated" />
           </template>
           <!-- GENERADOR DE SÍLABOS -->
           <template v-else-if="modal.type === 'syllabus'">

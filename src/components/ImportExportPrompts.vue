@@ -38,8 +38,10 @@
         </button>
       </div>
       <div v-else class="json-import">
-        <p class="mb-2">Pega el JSON Prompt</p>
-        <textarea v-model="jsonText" class="form-control mb-2" rows="8"></textarea>
+        <div class="text-center">
+          <p class="mb-2">Pega el JSON Prompt</p>
+          <textarea v-model="jsonText" rows="8"></textarea>
+        </div>
         <button class="btn-primary" @click="importFromText" :disabled="!jsonText.trim()">
           {{ $t('prompts.importExport.import') }}
         </button>

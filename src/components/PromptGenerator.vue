@@ -163,38 +163,29 @@ const savePromptDirectly = async () => {
     showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
     return;
   }
-
   if (!generatedPrompt.value.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
-
   isSaving.value = true;
   try {
-    // Extraer título y descripción del formato "título: descripción"
     let promptName = '';
     let promptDescription = '';
-    
-    // Buscar el patrón "título: " al inicio del texto
     const promptText = generatedPrompt.value.trim();
-    const titleMatch = promptText.match(/^(.*?):\s+([\s\S]*)$/);
-    
-    if (titleMatch && titleMatch.length >= 3) {
+    const titleMatch = promptText.match(/^(.+?)\s*::\s*([\s\S]+)$/);
+    if (titleMatch) {
       promptName = titleMatch[1].trim();
       promptDescription = titleMatch[2].trim();
     } else {
-      // Si no tiene el formato esperado, usar todo como título
-      promptName = promptText.substring(0, 50) + (promptText.length > 50 ? '...' : '');
+      promptName = promptText.substring(0, 50);
+      promptDescription = promptText;
     }
-
     const payload = {
       name: promptName,
-      value: generatedPrompt.value,
-      description: promptDescription,
+      value: promptDescription,
       category_id: selectedCategory.value?.value,
       is_favorite: false
     };
-
     const saved = await promptService.create(payload);
     emit('generated', { ...saved, saved: true });
     emit('close');
