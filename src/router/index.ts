@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import PromptsView from '@/views/PromptsView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
@@ -80,9 +79,7 @@ router.beforeEach(async (to, from, next) => {
       }
     }
     next()
-  } catch (error) {
-    next('/chat')
-  }
+  } catch (error) {}
 })
 
 export default router
