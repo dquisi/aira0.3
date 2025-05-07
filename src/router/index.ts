@@ -51,9 +51,18 @@ router.beforeEach(async (to, from, next) => {
   const originalParams = new URLSearchParams(window.location.search)
   const id = originalParams.get('id') || ''
   const data = originalParams.get('data') || ''
-  if (to.query.id !== id || to.query.data !== data) {
+  
+  // Si la ruta es raíz, redireccionar a /chat
+  if (to.path === '/') {
+    return next('/chat')
+  }
+  
+  // No forzar los parámetros id y data si no existen
+  // pero mantenerlos si están presentes en la URL
+  if ((id || data) && (to.query.id !== id || to.query.data !== data)) {
     return next({ path: to.path, query: { id, data } })
   }
+  
   try {
     if (to.meta.roles) {
       await BaseApiService.getParamsFromUrl()
