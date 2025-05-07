@@ -100,7 +100,6 @@ class PromptService extends BaseApiService {
       const essentialData = {
         name: prompt.name,
         value: prompt.value,
-        tags: prompt.tags || [],
         category_id: prompt.category_id
       }
       const promptJson = JSON.stringify(essentialData, null, 2)
@@ -127,7 +126,6 @@ class PromptService extends BaseApiService {
               name: prompt.name,
               value: prompt.value,
               is_favorite: false, // Por defecto no es favorito
-              tags: Array.isArray(prompt.tags) ? prompt.tags : [],
               category_id: prompt.category_id || null,
               moodle_course_id: BaseApiService.moodle_course_id,
               moodle_user_id: BaseApiService.moodle_user_id
@@ -205,7 +203,6 @@ class PromptService extends BaseApiService {
             name: prompt.name,
             value: prompt.value,
             is_favorite: false, // Por defecto no es favorito
-            tags: Array.isArray(prompt.tags) ? prompt.tags : [],
             category_id: prompt.category_id || null,
             moodle_course_id: BaseApiService.moodle_course_id,
             moodle_user_id: BaseApiService.moodle_user_id
@@ -237,7 +234,6 @@ class PromptService extends BaseApiService {
       const essentialData = prompts.map((p) => ({
         name: p.name,
         value: p.value,
-        tags: Array.isArray(p.tags) ? p.tags : [],
         category_id: p.category_id
       }))
       const dataStr = JSON.stringify(essentialData, null, 2)

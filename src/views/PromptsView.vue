@@ -60,9 +60,6 @@
         </div>
         <div class="card-body">
           <p class="card-text">{{ truncateText(p.value, 150) }}</p>
-          <div class="flex gap-1 flex-wrap">
-            <span v-for="tag in p.tags" :key="tag" class="tag">{{ tag }}</span>
-          </div>
         </div>
         <div class="card-actions">
           <div>
@@ -122,16 +119,7 @@
                 </template>
               </v-select>
             </div>
-            <div class="form-group">
-              <label>{{ t('prompts.form.tags') }}</label>
-              <div class="tags-input">
-                <span v-for="(tag, i) in modal.prompt.tags" :key="i" class="tag">
-                  {{ tag }}<i class="bi bi-x" @click="modal.prompt.tags.splice(i, 1)"></i>
-                </span>
-                <input type="text" v-model="modal.newTag" @keyup.enter="addTag()" class="tag-input"
-                  :placeholder="t('prompts.form.addTag')" />
-              </div>
-            </div>
+            
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
@@ -152,12 +140,7 @@
                 <strong>{{ t('prompts.card.useInChat') }}:</strong>
                 {{ modal.prompt.usage_count || 0 }}
               </div>
-              <div v-if="modal.prompt.tags?.length">
-                <strong>{{ t('prompts.form.tags') }}:</strong>
-                <div class="flex flex-wrap gap-1">
-                  <span v-for="(tag, i) in modal.prompt.tags" :key="i" class="tag">{{ tag }}</span>
-                </div>
-              </div>
+              
             </div>
           </template>
           <!-- ELIMINAR -->
@@ -247,8 +230,7 @@ const filters = reactive({
 const modal = reactive({
   isOpen: false,
   type: '' as string,
-  prompt: { tags: [] } as Partial<Prompt> & { tags: string[] },
-  newTag: '',
+  prompt: {} as Partial<Prompt>,
   params: [] as PromptParameter[],
   processed: '',
   apiId: BaseApiService.getApiIntegrationIdByRole()
@@ -389,26 +371,25 @@ function openForm(p?: Prompt) {
   modal.type = 'form';
   modal.isOpen = true;
   modal.prompt = p
-    ? { ...p, tags: [...(p.tags || [])] }
-    : { name: '', value: '', tags: [], category_id: state.categories[0]?.id };
+    ? { ...p }
+    : { name: '', value: '', category_id: state.categories[0]?.id };
   modal.newTag = '';
   modal.params = [];
 }
 function openView(p: Prompt) {
   modal.type = 'view';
   modal.isOpen = true;
-  modal.prompt = { ...p, tags: [...(p.tags || [])] };
+  modal.prompt = { ...p };
 }
 function confirmDelete(p: Prompt) {
   modal.type = 'delete';
   modal.isOpen = true;
-  modal.prompt = { ...p, tags: [...(p.tags || [])] };
+  modal.prompt = { ...p };
 }
 function openSpecial(type: string) {
   modal.type = type;
   modal.isOpen = true;
-  modal.prompt = { tags: [] };
-  modal.newTag = '';
+  modal.prompt = {};
   modal.params = [];
 }
 function closeModal() {
@@ -418,13 +399,7 @@ function closeModalAndReload() {
   closeModal();
   loadData();
 }
-function addTag() {
-  const tag = modal.newTag.trim();
-  if (tag && !modal.prompt.tags.includes(tag)) {
-    modal.prompt.tags.push(tag);
-  }
-  modal.newTag = '';
-}
+
 async function save() {
   if (!isFormValid.value) {
     showNotification(t('prompts.error'), 'error');

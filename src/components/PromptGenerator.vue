@@ -29,17 +29,7 @@
           <textarea v-model="instructions" class="form-control" rows="6"
             :placeholder="t('prompts.generator.instructionsPlaceholder')"></textarea>
         </div>
-        <!-- Etiquetas -->
-        <div class="form-group">
-          <label>{{ t('prompts.form.tags') }}</label>
-          <div class="tags-input">
-            <span v-for="(tag, i) in tags" :key="i" class="tag">
-              {{ tag }}<i class="bi bi-x" @click="removeTag(i)"></i>
-            </span>
-            <input type="text" v-model="newTag" @keyup.enter="addTag"
-              :placeholder="t('prompts.form.addTag')" class="tag-input" />
-          </div>
-        </div>
+        
         <!-- Plantillas de prueba -->
         <div class="generator-templates">
           <p class="templates-title">{{ t('prompts.generator.tryIt') }}</p>
@@ -102,8 +92,7 @@ interface Option { label: string; value: number; color: string; }
 const categories = ref<Category[]>([]);
 const selectedCategory = ref<Option | null>(null);
 const instructions = ref('');
-const tags = ref<string[]>([]);
-const newTag = ref('');
+
 const generatedPrompt = ref('');
 const isGenerating = ref(false);
 const isSaving = ref(false);
@@ -147,17 +136,7 @@ const loadCategories = async () => {
     loadingCategories.value = false;
   }
 };
-// --- Manejo de etiquetas ---
-const normalizeTag = (txt: string) =>
-  txt.toLowerCase().replace(/[^\w\sáéíóúüñ]/g, '').trim();
-const addTag = () => {
-  const tag = normalizeTag(newTag.value);
-  if (tag && !tags.value.includes(tag)) tags.value.push(tag);
-  newTag.value = '';
-};
-const removeTag = (idx: number) => {
-  tags.value.splice(idx, 1);
-};
+
 // --- Generar prompt ---
 const generatePrompt = async () => {
   if (!instructions.value.trim()) return;
@@ -180,7 +159,6 @@ const savePromptDirectly = async () => {
     const payload = {
       name: title,
       value: generatedPrompt.value,
-      tags: tags.value,
       category_id: selectedCategory.value?.value,
       is_favorite: false
     };

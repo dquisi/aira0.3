@@ -4,7 +4,6 @@ export interface Prompt {
   value: string
   is_favorite: boolean
   active: boolean
-  tags: string[]
   moodle_user_id: number
   course_id: number
   category_id: number
