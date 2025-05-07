@@ -388,23 +388,18 @@ function closeModalAndReload() {
 }
 
 async function save() {
-  // Validar todos los campos obligatorios de una vez
-  const missingFields = [];
-
   if (!modal.prompt.category_id) {
-    missingFields.push(t('prompts.form.category'));
+    showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
+    return;
   }
 
   if (!modal.prompt.name?.trim()) {
-    missingFields.push(t('prompts.form.title'));
+    showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
+    return;
   }
 
   if (!modal.prompt.value?.trim()) {
-    missingFields.push(t('prompts.form.content'));
-  }
-
-  if (missingFields.length > 0) {
-    showNotification(missingFields.join(', ') + ' ' + t('common.required'), 'error');
+    showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
 
@@ -488,19 +483,6 @@ watch(
 </script>
 
 <style scoped>
-.search-filter-inline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.filter-options {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
 .category-badge {
   position: absolute;
@@ -523,67 +505,10 @@ watch(
   padding-top: 8px;
 }
 
-.text-error {
-  color: #ff5252;
-  font-size: 0.9rem;
-  margin-top: 4px;
+.tag {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
 }
 
-.favorite-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--card-border);
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  transition: .4s;
-}
-
-input:checked+.slider {
-  background-color: var(--primary-color);
-}
-
-input:checked+.slider:before {
-  transform: translateX(20px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
 </style>
