@@ -49,10 +49,12 @@ export const isAuthorized = (allowedRoles: string[]): boolean => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  // Obtener parámetros de autenticación
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  const urlParams = { id, data }
+
+  // Si hay parámetros de autenticación, sincronizarlos con la URL
   if (id && data) {
     const needsParamSync = to.query.id !== id || to.query.data !== data
     if (needsParamSync) {
@@ -60,23 +62,33 @@ router.beforeEach(async (to, from, next) => {
         path: to.path,
         query: {
           ...to.query,
-          ...urlParams
+          id,
+          data
         }
       })
     }
   }
+
+  // Solo verificar autorización si la ruta tiene requisitos de roles
   if (to.meta.roles) {
     try {
+      // Si existen parámetros de autenticación, verificar permisos
       if (id && data) {
         await BaseApiService.getParamsFromUrl()
+        // Si no está autorizado, redirigir al home
         if (!isAuthorized(to.meta.roles as string[])) {
           return next('/')
         }
+      } else {
+        // Si faltan parámetros de autenticación pero la ruta requiere roles, ir al home
+        return next('/')
       }
     } catch (err) {
       return next('/')
     }
   }
+
+  // Si todo está bien o la ruta no requiere roles, continuar
   next()
 })
 
