@@ -214,7 +214,7 @@ class ChatService extends BaseApiService {
                   type: 'document'
                 }
               }
-              
+
               if (d.tool in specificTools) {
                 const toolInfo = specificTools[d.tool]
                 // Crear mensaje temporal con ID único para poder eliminarlo después
@@ -239,7 +239,7 @@ class ChatService extends BaseApiService {
                     action: 'remove_temp',
                     tempId: tempId
                   })
-                }, 8000)
+                }, 10000)
               }
             } else if (d.event === 'agent_message' && d.answer) {
               if (streamingMessage.content) {

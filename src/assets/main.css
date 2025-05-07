@@ -1169,11 +1169,6 @@ button {
   opacity: 0.9;
 }
 
-.temp-content {
-  background-color: rgba(var(--primary-color-rgb), 0.1);
-  border: 1px dashed rgba(var(--primary-color-rgb), 0.5);
-}
-
 .processing-message {
   display: flex;
   flex-direction: column;
@@ -1205,6 +1200,7 @@ button {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     transform: scale(0.8);

@@ -4,6 +4,7 @@ import CategoriesView from '@/views/CategoriesView.vue'
 import ChatView from '@/views/ChatView.vue'
 import EventsView from '@/views/EventsView.vue'
 import { BaseApiService } from '@/services/BaseApiService'
+import { showNotification } from '@/utils/notifications'
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -21,19 +22,19 @@ export const routes: RouteRecordRaw[] = [
     path: '/events',
     name: 'Events',
     component: EventsView,
-    meta: { roles: ['teacher', 'manager', 'student'] }
+    meta: { roles: ['manager'] }
   },
   {
     path: '/prompts',
     name: 'Prompts',
     component: PromptsView,
-    meta: { roles: ['teacher', 'manager', 'student'] }
+    meta: { roles: ['teacher', 'manager'] }
   },
   {
     path: '/categories',
     name: 'Categories',
     component: CategoriesView,
-    meta: { roles: ['teacher', 'manager', 'student'] }
+    meta: { roles: ['manager'] }
   }
 ]
 
@@ -48,38 +49,40 @@ export const isAuthorized = (allowedRoles: string[]): boolean => {
 }
 
 router.beforeEach(async (to, from, next) => {
-  // Obtener los parámetros originales de la URL
-  const originalParams = new URLSearchParams(window.location.search)
-  const id = originalParams.get('id') || ''
-  const data = originalParams.get('data') || ''
-
-  // Verificar si estamos yendo a la ruta raíz y redirigir a /chat con parámetros
+  const params = new URLSearchParams(window.location.search)
+  const id = params.get('id')
+  const data = params.get('data')
+  if (!id || !data) {
+    showNotification('Token Invalidate !!!', 'error')
+  }
   if (to.path === '/') {
-    const query = { ...to.query }
-    if (id) query.id = id
-    if (data) query.data = data
-    return next({ path: '/chat', query })
+    return next({
+      path: '/chat',
+      query: { id, data }
+    })
   }
-
-  // Para cualquier otra ruta, mantener los parámetros id y data si existen
-  if ((id || data) && (to.path !== '/chat' || to.query.id !== id || to.query.data !== data)) {
-    const query = { ...to.query }
-    if (id) query.id = id
-    if (data) query.data = data
-    if (JSON.stringify(query) !== JSON.stringify(to.query)) {
-      return next({ path: to.path, query })
-    }
+  const needsParamSync = to.query.id !== id || to.query.data !== data
+  if (needsParamSync) {
+    return next({
+      path: to.path,
+      query: {
+        ...to.query,
+        id,
+        data
+      }
+    })
   }
-
   try {
     if (to.meta.roles) {
       await BaseApiService.getParamsFromUrl()
       if (!isAuthorized(to.meta.roles as string[])) {
-        return next('/chat')
+        showNotification('Permmissions Invalidate !!!', 'error')
       }
     }
     next()
-  } catch (error) {}
+  } catch (err) {
+    next(err)
+  }
 })
 
 export default router
