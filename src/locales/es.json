@@ -229,6 +229,7 @@
   },
   "chats": {
     "title": "Chat",
+    "help": "Hola, ¿quién eres? ¿Podrías listarme todas tus funcionalidades?",
     "history": {
       "title": "Historial",
       "new": "Nuevo Chat",

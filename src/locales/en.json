@@ -180,6 +180,7 @@
   },
   "events": {
     "title": "Events",
+    "help": "Hello, who are you? Could you list all your capabilities?",
     "name": "Event Name",
     "status": "Status",
     "prompt": "Prompt",

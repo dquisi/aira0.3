@@ -8,9 +8,6 @@
           <button class="btn-icon d-md-none" @click="toggleHistoryPanel">
             <i class="bi bi-clock-history"></i>
           </button>
-          <button class="btn-icon" @click="sendHelpMessage" title="Ayuda">
-            <i class="bi bi-question-circle"></i>
-          </button>
         </div>
       </div>
       <!-- Panel móvil que aparece como overlay -->
@@ -141,6 +138,9 @@
           <textarea v-model="inputMessage" class="message-input" :placeholder="$t('chats.input.placeholder')"
             @keydown.enter.exact.prevent="sendMessage()"
             :disabled="audioState.status === 'playing' || isAudioProcessing"></textarea>
+          <button class="btn-icon" @click="sendMessage($t('chats.help'))" title="Ayuda">
+            <i class="bi bi-question-circle"></i>
+          </button>
           <button class="btn-icon" @click="triggerFileInput"
             :disabled="audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-paperclip"></i>
@@ -203,7 +203,6 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { marked } from 'marked'
 import 'highlight.js/styles/github.css'
 import ChatService from '@/services/ChatService'
-import { BaseApiService } from '@/services/BaseApiService'
 import ChatHistory from '@/components/ChatHistory.vue'
 import type { Message, FileAttachment } from '@/types'
 import { handleError, showNotification } from '@/utils/notifications'
@@ -628,10 +627,6 @@ const loadConversationMessages = async (conversationId: string) => {
     isLoading.value = false
     scrollToBottom()
   }
-}
-
-const sendHelpMessage = () => {
-  sendMessage('Hola, quien eres, ¿Listame todo lo que puedes hacer?')
 }
 
 const newChat = async () => {
