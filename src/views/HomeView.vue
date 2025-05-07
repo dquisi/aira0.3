@@ -6,8 +6,6 @@
       <h1 class="app-title">AIRA</h1>
     </div>
 
-
-
     <div class="intro-container">
       <h2>{{ t('home.welcomeTitle') }}</h2>
       <div class="intro-content">
@@ -20,6 +18,7 @@
         <i class="bi bi-chat-dots"></i> {{ t('home.startChat') }}
       </button>
     </div>
+    
     <div class="status-container">
       <div class="status-card" :class="{ 'status-error': !isTokenValid, 'status-success': isTokenValid }">
         <i class="bi" :class="isTokenValid ? 'bi-check-circle' : 'bi-x-circle'"></i>
@@ -70,6 +69,7 @@ onMounted(async () => {
       userRole.value = BaseApiService.role || ''
       hasPermissions.value = isAuthorized(['teacher', 'manager', 'student'])
     } catch (err) {
+      console.error('Error verificando permisos:', err)
       hasPermissions.value = false
     }
   }

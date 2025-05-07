@@ -265,15 +265,16 @@
     "graphics": "Genera una grafica de los datos"
   },
   "home": {
-    "tokenStatus": "Estado del Token",
-    "tokenValid": "Token válido",
-    "tokenInvalid": "Token inválido. Por favor, inicia sesión nuevamente.",
-    "permissionStatus": "Estado de Permisos",
-    "hasPermissions": "Tienes permisos para acceder a la aplicación",
-    "noPermissions": "No tienes los permisos necesarios para acceder a la aplicación",
-    "role": "Rol",
+    "title": "Inicio",
     "welcomeTitle": "Bienvenido a AIRA",
     "welcomeText": "AIRA (Asistente Inteligente con Respuestas Adaptativas) es una plataforma educativa impulsada por inteligencia artificial diseñada para apoyar el aprendizaje personalizado.<br><br>Con AIRA, puedes acceder a un asistente virtual que responde preguntas, genera contenido educativo y te ayuda a organizar tus tareas de aprendizaje. La plataforma está diseñada para adaptarse a diferentes roles y necesidades dentro del entorno educativo.<br><br>Explora las diferentes funcionalidades según tu rol y aprovecha al máximo esta herramienta innovadora para mejorar tu experiencia educativa.",
-    "startChat": "Iniciar Chat"
+    "startChat": "Iniciar Chat",
+    "tokenStatus": "Estado de Autenticación",
+    "tokenValid": "Autenticado correctamente",
+    "tokenInvalid": "No autenticado",
+    "permissionStatus": "Estado de Permisos",
+    "hasPermissions": "Permisos verificados",
+    "noPermissions": "Sin permisos válidos",
+    "role": "Rol"
   }
 }

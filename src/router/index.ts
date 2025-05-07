@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import PromptsView from '@/views/PromptsView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
@@ -50,35 +51,53 @@ export const isAuthorized = (allowedRoles: string[]): boolean => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  // Obtener parámetros de URL actual
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  // Si estamos en la página de inicio, no se requiere verificación previa
-  if (to.path === '/') {
+  
+  // Si no hay id o data, redirigir a home para mostrar estado de autenticación
+  if (!id || !data) {
+    if (to.path !== '/') {
+      return next('/')
+    }
     return next()
   }
+
+  // Preparar los parámetros para la próxima ruta
+  const urlParams = { id, data }
+  
+  // Comprobar si necesitamos añadir los parámetros a la URL
   const needsParamSync = to.query.id !== id || to.query.data !== data
+  
+  // Si necesitamos sincronizar los parámetros
   if (needsParamSync) {
     return next({
       path: to.path,
       query: {
         ...to.query,
-        id,
-        data
+        ...urlParams
       }
     })
   }
-  try {
-    if (to.meta.roles) {
+
+  // Verificar permisos solo si la ruta requiere roles específicos
+  if (to.meta.roles) {
+    try {
       await BaseApiService.getParamsFromUrl()
+      
       if (!isAuthorized(to.meta.roles as string[])) {
-        showNotification('Permmissions Invalidate !!!', 'error')
+        showNotification('No tienes permisos para acceder a esta sección', 'error')
+        // Si no tiene permisos, redirigir a home
+        return next('/')
       }
+    } catch (err) {
+      console.error('Error verificando permisos:', err)
+      return next('/')
     }
-    next()
-  } catch (err) {
-    next(err)
   }
+  
+  next()
 })
 
 export default router
