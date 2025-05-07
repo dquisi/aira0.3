@@ -37,7 +37,6 @@
         </div>
       </div>
     </div>
-    <!-- CARGA / VACÍO -->
     <div v-if="state.loading" class="loading">
       <div class="spinner"></div>
     </div>
@@ -74,7 +73,6 @@
           </div>
         </div>
       </div>
-      <!-- Eliminado el lazy loading -->
     </section>
     <!-- MODAL UNIFICADO -->
     <div v-if="modal.isOpen" class="modal-overlay" @click.self="closeModal">
@@ -193,7 +191,6 @@
 <script setup lang="ts">
 import {
   reactive,
-  ref,
   computed,
   onMounted,
   watch,
@@ -393,19 +390,19 @@ function closeModalAndReload() {
 async function save() {
   // Validar todos los campos obligatorios de una vez
   const missingFields = [];
-  
+
   if (!modal.prompt.category_id) {
     missingFields.push(t('prompts.form.category'));
   }
-  
+
   if (!modal.prompt.name?.trim()) {
     missingFields.push(t('prompts.form.title'));
   }
-  
+
   if (!modal.prompt.value?.trim()) {
     missingFields.push(t('prompts.form.content'));
   }
-  
+
   if (missingFields.length > 0) {
     showNotification(missingFields.join(', ') + ' ' + t('common.required'), 'error');
     return;
@@ -574,11 +571,11 @@ watch(
   transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: var(--primary-color);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(20px);
 }
 
