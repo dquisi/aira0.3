@@ -47,12 +47,12 @@
     <section v-else class="grid">
       <div v-for="p in state.prompts" :key="p.id" class="card">
         <div class="sidebar-indicator" :style="{ backgroundColor: getCat(p).color }"></div>
+        <div class="category-badge" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
+          {{ getCat(p).label }}
+        </div>
         <div class="card-header">
           <div class="flex justify-between items-center w-full flex-wrap">
             <h3 class="card-title">{{ p.name }}</h3>
-            <span class="tag" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
-              {{ getCat(p).label }}
-            </span>
           </div>
           <div class="flex items-center gap-1">
             <i class="bi bi-play-circle"></i> {{ p.usage_count || 0 }}
@@ -480,5 +480,26 @@ watch(
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.category-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.card {
+  padding-top: 8px;
 }
 </style>
