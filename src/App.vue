@@ -118,7 +118,7 @@ onMounted(async () => {
         </div>
         <!-- Menú de navegación en el centro -->
         <div class="nav-links">
-          <router-link v-for="route in filteredRoutes.slice(1)" :key="route.path" :to="route.path" class="nav-link"
+          <router-link v-for="route in filteredRoutes.slice(2)" :key="route.path" :to="route.path" class="nav-link"
             :title="t('navigation.' + route.name)">
             <i :class="getIcon(route.name)"></i>
             <span class="nav-text">{{ t('navigation.' + route.name) }}</span>

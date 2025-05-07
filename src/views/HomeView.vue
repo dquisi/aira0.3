@@ -60,7 +60,6 @@ onMounted(async () => {
       userRole.value = BaseApiService.role || ''
       hasPermissions.value = isAuthorized(['teacher', 'manager', 'student'])
     } catch (err) {
-      console.error('Error verificando permisos:', err)
       hasPermissions.value = false
     }
   }
