@@ -151,6 +151,21 @@
             :disabled="!canSendMessage || isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-send"></i>
           </button>
+          <div class="dropdown">
+            <button class="btn-icon" @click="showFavoritePrompts = !showFavoritePrompts">
+              <i class="bi bi-bookmark-heart"></i>
+            </button>
+            <div v-if="showFavoritePrompts" class="dropdown-menu">
+              <ul class="favorite-prompts-list" v-if="favoritePrompts.length > 0">
+                <li v-for="prompt in favoritePrompts" :key="prompt.id" class="favorite-prompt-item"
+                  @click="usePrompt(prompt)">
+                  {{ prompt.value }}
+                  <span class="prompt-usage">({{ prompt.usage_count }} usos)</span>
+                </li>
+              </ul>
+              <p v-else class="no-favorites">No hay prompts favoritos aún.</p>
+            </div>
+          </div>
         </div>
         <div v-if="selectedFiles.length" class="selected-files">
           <div v-for="(file, index) in selectedFiles" :key="index" class="file-preview">
@@ -689,4 +704,116 @@ const getFilePreviewUrl = (file: any) => {
 }
 const isRecording = ref(false)
 const lastMessage = ref('')
+
+// Funcionalidad de prompts favoritos
+const favoritePrompts = ref<Prompt[]>([])
+const showFavoritePrompts = ref(false)
+
+onMounted(async () => {
+  await loadFavoritePrompts()
+})
+
+const loadFavoritePrompts = async () => {
+  try {
+    const promptService = (await import('@/services/PromptService')).default
+    const allPrompts = await promptService.getAll()
+
+    // Filtrar solo los favoritos sin variables
+    const favoritesWithoutVars = allPrompts
+      .filter(p => p.is_favorite && !containsVariables(p.value))
+      .sort((a, b) => b.usage_count - a.usage_count)
+      .slice(0, 10)
+
+    favoritePrompts.value = favoritesWithoutVars
+  } catch (error) {
+    console.error('Error cargando prompts favoritos:', error)
+  }
+}
+
+const containsVariables = (text: string): boolean => {
+  return /\[(.*?)\]/.test(text)
+}
+
+const usePrompt = async (prompt: Prompt) => {
+  try {
+    inputMessage.value = prompt.value
+
+    // Incrementar contador de uso
+    const promptService = (await import('@/services/PromptService')).default
+    if (prompt.id) {
+      await promptService.incrementUsageCount(prompt.id)
+      // Actualizar la lista de favoritos
+      await loadFavoritePrompts()
+    }
+  } catch (error) {
+    console.error('Error al usar el prompt:', error)
+  }
+}
 </script>
+
+<style scoped>
+/* Estilos para dropdown de prompts favoritos */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background-color: var(--card-background);
+  min-width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.favorite-prompts-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.favorite-prompt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.favorite-prompt-item:last-child {
+  border-bottom: none;
+}
+
+.favorite-prompt-item:hover {
+  background-color: var(--hover-color);
+}
+
+.prompt-usage {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-left: 8px;
+}
+
+.no-favorites {
+  padding: 12px;
+  text-align: center;
+  color: var(--text-muted);
+}
+</style>
