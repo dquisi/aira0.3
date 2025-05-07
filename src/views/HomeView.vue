@@ -12,13 +12,6 @@
         <p v-html="t('home.welcomeText')"></p>
       </div>
     </div>
-
-    <div class="action-container" v-if="isTokenValid && hasPermissions">
-      <button class="btn-primary" @click="goToChat">
-        <i class="bi bi-chat-dots"></i> {{ t('home.startChat') }}
-      </button>
-    </div>
-    
     <div class="status-container">
       <div class="status-card" :class="{ 'status-error': !isTokenValid, 'status-success': isTokenValid }">
         <i class="bi" :class="isTokenValid ? 'bi-check-circle' : 'bi-x-circle'"></i>
@@ -42,29 +35,23 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { BaseApiService } from '@/services/BaseApiService'
 import { isAuthorized } from '@/router'
 
 const { t } = useI18n()
-const router = useRouter()
 
 const isTokenValid = ref(false)
 const hasPermissions = ref(false)
 const userRole = ref('')
 
 onMounted(async () => {
-  // Verificar token
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-
   isTokenValid.value = !!id && !!data && id !== '' && data !== ''
-
   if (isTokenValid.value) {
     try {
-      // Verificar permisos
       await BaseApiService.getParamsFromUrl()
       userRole.value = BaseApiService.role || ''
       hasPermissions.value = isAuthorized(['teacher', 'manager', 'student'])
@@ -75,16 +62,6 @@ onMounted(async () => {
   }
 })
 
-function goToChat() {
-  const params = new URLSearchParams(window.location.search)
-  const id = params.get('id')
-  const data = params.get('data')
-
-  router.push({
-    path: '/chat',
-    query: { id, data }
-  })
-}
 </script>
 
 <style scoped>

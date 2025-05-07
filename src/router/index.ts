@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import PromptsView from '@/views/PromptsView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
@@ -6,7 +5,6 @@ import ChatView from '@/views/ChatView.vue'
 import EventsView from '@/views/EventsView.vue'
 import HomeView from '@/views/HomeView.vue'
 import { BaseApiService } from '@/services/BaseApiService'
-import { showNotification } from '@/utils/notifications'
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -51,26 +49,16 @@ export const isAuthorized = (allowedRoles: string[]): boolean => {
 }
 
 router.beforeEach(async (to, from, next) => {
-  // Obtener parámetros de URL actual
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  
-  // Si no hay id o data, redirigir a home para mostrar estado de autenticación
   if (!id || !data) {
     if (to.path !== '/') {
       return next('/')
     }
-    return next()
   }
-
-  // Preparar los parámetros para la próxima ruta
   const urlParams = { id, data }
-  
-  // Comprobar si necesitamos añadir los parámetros a la URL
   const needsParamSync = to.query.id !== id || to.query.data !== data
-  
-  // Si necesitamos sincronizar los parámetros
   if (needsParamSync) {
     return next({
       path: to.path,
@@ -80,23 +68,16 @@ router.beforeEach(async (to, from, next) => {
       }
     })
   }
-
-  // Verificar permisos solo si la ruta requiere roles específicos
   if (to.meta.roles) {
     try {
       await BaseApiService.getParamsFromUrl()
-      
       if (!isAuthorized(to.meta.roles as string[])) {
-        showNotification('No tienes permisos para acceder a esta sección', 'error')
-        // Si no tiene permisos, redirigir a home
         return next('/')
       }
     } catch (err) {
-      console.error('Error verificando permisos:', err)
       return next('/')
     }
   }
-  
   next()
 })
 
