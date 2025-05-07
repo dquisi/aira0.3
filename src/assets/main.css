@@ -1205,7 +1205,6 @@ button {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     transform: scale(0.8);
@@ -1216,6 +1215,47 @@ button {
     transform: scale(1.2);
     opacity: 1;
   }
+}
+
+.processing-visual {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.processing-visual i {
+  font-size: 2rem;
+  margin-right: 1rem;
+  color: var(--primary-color);
+}
+
+.processing-visual.graphics i {
+  color: #4CAF50;
+}
+
+.processing-visual.document i {
+  color: #2196F3;
+}
+
+.processing-info {
+  flex: 1;
+}
+
+.processing-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.processing-time {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.html-content {
+  width: 100%;
 }
 
 .markdown-content h1,

@@ -57,7 +57,8 @@
             </div>
             <div v-if="message.sender === 'assistant'" class="markdown-content">
               <div v-if="message.isTemporary" class="processing-message">
-                <div v-html="renderMarkdown(message.content)"></div>
+                <div v-if="message.isHtml" v-html="message.content" class="html-content"></div>
+                <div v-else v-html="renderMarkdown(message.content)"></div>
                 <div class="processing-indicator">
                   <span></span><span></span><span></span>
                 </div>

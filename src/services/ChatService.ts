@@ -194,21 +194,43 @@ class ChatService extends BaseApiService {
               }
               this.notifySubscribers({ action: 'remove_all_temp' })
             } else if (d.event === 'agent_thought' && d.tool) {
-              let tempMessage = ''
               const specificTools = {
-                Generator_Graphics: 'Este proceso tardará 20 segundos aproximadamente',
-                generate_text_activities: 'Este proceso tardará 40 segundos aproximadamente',
-                Generate_content_resources: 'Este proceso tardará 40 segundos aproximadamente'
+                Generator_Graphics: {
+                  message: 'Generando gráficos',
+                  icon: 'bi-bar-chart-line',
+                  time: 20,
+                  type: 'graphics'
+                },
+                generate_text_activities: {
+                  message: 'Generando actividades',
+                  icon: 'bi-list-check',
+                  time: 40,
+                  type: 'document'
+                },
+                Generate_content_resources: {
+                  message: 'Generando recursos',
+                  icon: 'bi-file-earmark-text',
+                  time: 40,
+                  type: 'document'
+                }
               }
+              
               if (d.tool in specificTools) {
-                tempMessage = specificTools[d.tool]
+                const toolInfo = specificTools[d.tool]
                 // Crear mensaje temporal con ID único para poder eliminarlo después
                 const tempId = 'temp_' + Date.now()
                 const tempStreamingMessage = {
-                  content: tempMessage,
+                  content: `<div class="processing-visual ${toolInfo.type}">
+                    <i class="bi ${toolInfo.icon}"></i>
+                    <div class="processing-info">
+                      <div class="processing-title">${toolInfo.message}</div>
+                      <div class="processing-time">Este proceso tardará ${toolInfo.time} segundos aproximadamente</div>
+                    </div>
+                  </div>`,
                   sender: 'assistant',
                   time: new Date().toISOString(),
                   isTemporary: true,
+                  isHtml: true,
                   tempId: tempId
                 }
                 this.notifySubscribers({ ...tempStreamingMessage })
