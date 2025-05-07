@@ -65,22 +65,38 @@ class ChatService extends BaseApiService {
       const url = `/api/v1/middleware/${apiIntegrationId}/v1/messages`
       const result = await this.get(url, { params })
       if (!result?.data) return []
-      console.log(result.data)
+      console.log('Mensajes obtenidos:', result.data)
+      
       return result.data
-        .map((msg: any) => ({
-          content: msg.query || msg.answer || '',
-          sender: msg.query ? 'user' : 'assistant',
-          time: new Date(msg.created_at * 1000).toISOString(),
-          conversation_id: msg.conversation_id,
-          message_id: msg.id,
-          attachments: (msg.message_files || []).map((file: any) => ({
-            name: file.id,
-            type: file.type || 'file',
-            size: 0,
-            url: file.url
-          }))
-        }))
-        .reverse()
+        .map((msg: any) => {
+          // Procesar archivos adjuntos si existen
+          const attachments = Array.isArray(msg.message_files) 
+            ? msg.message_files.map((file: any) => ({
+                name: file.filename || file.id || 'archivo',
+                type: file.type || 'file',
+                size: file.size || 0,
+                url: file.url || '',
+                isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
+                belongs_to: file.belongs_to || (msg.query ? 'user' : 'assistant')
+              }))
+            : [];
+            
+          return {
+            content: msg.query || msg.answer || '',
+            sender: msg.query ? 'user' : 'assistant',
+            time: new Date(msg.created_at * 1000).toISOString(),
+            conversation_id: msg.conversation_id,
+            message_id: msg.id,
+            attachments: attachments,
+            agent_thoughts: msg.agent_thoughts || [],
+            parent_message_id: msg.parent_message_id || '',
+            retrieve_resources: msg.retrieve_resources || [],
+            status: msg.status || 'normal',
+            error: msg.error || null,
+            feedback: msg.feedback || null
+          };
+        })
+        .reverse();
     } catch (error) {
       throw error
     }
