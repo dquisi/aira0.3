@@ -176,7 +176,7 @@
           </template>
         </div>
         <footer class="modal-footer">
-          <button v-if="modal.type === 'form'" class="btn-primary" @click="save()" :disabled="!isFormValid">
+          <button v-if="modal.type === 'form'" class="btn-primary" @click="save()">
             {{ t('common.save') }}
           </button>
           <button v-if="modal.type === 'variables'" class="btn-primary" @click="sendVariables()">
@@ -266,11 +266,6 @@ const cardActionGroups = [
     { icon: 'bi bi-eye', handler: openView }
   ]
 ];
-const isFormValid = computed(() =>
-  !!modal.prompt.name?.trim() &&
-  !!modal.prompt.value?.trim() &&
-  !!modal.prompt.category_id
-);
 // --- HELPERS ---
 function getCat(p: Prompt) {
   return state.categories.find(c => c.id === p.category_id)
@@ -483,7 +478,6 @@ watch(
 </script>
 
 <style scoped>
-
 .category-badge {
   position: absolute;
   top: 5px;
@@ -510,5 +504,4 @@ watch(
   border-radius: 12px;
   font-size: 0.75rem;
 }
-
 </style>
