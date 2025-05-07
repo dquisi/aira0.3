@@ -52,32 +52,43 @@ router.beforeEach(async (to, from, next) => {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  if (!id || !data) {
-    if (to.path !== '/') {
-      return next('/')
+  
+  // Preparar los parámetros para las rutas
+  const urlParams = { id, data }
+  
+  // Solo sincronizar los parámetros si existen
+  if (id && data) {
+    const needsParamSync = to.query.id !== id || to.query.data !== data
+    if (needsParamSync) {
+      return next({
+        path: to.path,
+        query: {
+          ...to.query,
+          ...urlParams
+        }
+      })
     }
   }
-  const urlParams = { id, data }
-  const needsParamSync = to.query.id !== id || to.query.data !== data
-  if (needsParamSync) {
-    return next({
-      path: to.path,
-      query: {
-        ...to.query,
-        ...urlParams
-      }
-    })
-  }
+  
+  // Verificar permisos solo para rutas que requieren rol específico
   if (to.meta.roles) {
     try {
-      await BaseApiService.getParamsFromUrl()
-      if (!isAuthorized(to.meta.roles as string[])) {
+      // Intentar cargar los parámetros de autenticación
+      if (id && data) {
+        await BaseApiService.getParamsFromUrl()
+        if (!isAuthorized(to.meta.roles as string[])) {
+          // Si no tiene permisos para esta ruta, redirigir a home
+          return next('/')
+        }
+      } else {
+        // Si faltan parámetros de autenticación para una ruta protegida
         return next('/')
       }
     } catch (err) {
       return next('/')
     }
   }
+  
   next()
 })
 
