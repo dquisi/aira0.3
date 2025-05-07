@@ -234,11 +234,10 @@ body {
 }
 
 .container {
-  width: 90%;
-  max-width: 90%;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  height: 90vh;
 }
 
 button {
@@ -777,9 +776,6 @@ button {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .card-grid {
@@ -862,8 +858,7 @@ button {
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 90%;
-  max-width: 90%;
-  height: 90vh;
+  max-width: 800px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -1372,8 +1367,7 @@ button {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 90%;
-  height: 90vh;
+  max-width: 500px;
   background-color: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -1726,9 +1720,8 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  width: 90%;
-  max-width: 300px;
-  height: 90vh;
+  width: 300px;
+  height: 100vh;
   background-color: var(--card-background);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -1757,14 +1750,13 @@ button {
 
 .chat-with-sidebar {
   display: flex;
-  height: 90vh;
-  width: 90%;
-  margin: 0 auto;
+  height: 75vh;
+  width: 100%;
 }
 
 .chat-sidebar {
   width: 300px;
-  height: 90vh;
+  height: 100vh;
   border-right: 1px solid var(--card-border);
   background-color: var(--card-background);
   display: flex;
@@ -1941,7 +1933,7 @@ button {
 }
 
 .main-nav {
-  width: 90%;
+  width: 97.5%;
   margin: 0 auto;
   background-color: var(--card-background);
   box-shadow: 0 2px 4px var(--card-shadow);
