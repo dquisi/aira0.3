@@ -92,11 +92,7 @@ interface Option { label: string; value: number; color: string; }
 const categories = ref<Category[]>([]);
 const selectedCategory = ref<Option | null>(null);
 const instructions = ref('');
-
 const generatedPrompt = ref('');
-const promptName = ref('');
-const promptDescription = ref('');
-const isFavorite = ref(false);
 const isGenerating = ref(false);
 const isSaving = ref(false);
 const loadingCategories = ref(false);
@@ -157,7 +153,7 @@ const generatePrompt = async () => {
     generatedPrompt.value = await promptService.generatePrompt(instructions.value);
   } catch (error) {
     handleError(error, t('common.error'));
-  } finally {  
+  } finally {
     isGenerating.value = false;
   }
 };
