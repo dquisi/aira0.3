@@ -150,14 +150,23 @@ class PromptService extends BaseApiService {
 
   async getAll(): Promise<Prompt[]> {
     try {
-      const result = await this.search({
+      const filters = [
+        { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
+        { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
+      ];
+      
+      const searchParams = {
         skip: 0,
-        limit: 1000,
-        filters: []
-      })
-      return result.answer || []
+        limit: 1000, // Un límite alto para obtener todos los prompts
+        filters: filters,
+        sort: [{ field: 'created_at', direction: 'desc' }]
+      };
+      
+      const result = await this.post('/api/v1/prompt/search', searchParams);
+      return Array.isArray(result.answer) ? result.answer : [];
     } catch (error) {
-      return []
+      console.error('Error obteniendo todos los prompts:', error);
+      return [];
     }
   }
 
