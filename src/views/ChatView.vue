@@ -3,14 +3,12 @@
     <!-- Contenido principal del chat -->
     <div class="chat-main">
       <div class="container">
-        <div class="header">
-          <!-- Solo mostrar botón de historial en móvil -->
+        <div class="header" v-if="!props.customPrompt">
           <button class="btn-icon d-md-none" @click="toggleHistoryPanel">
             <i class="bi bi-clock-history"></i>
           </button>
         </div>
       </div>
-      <!-- Panel móvil que aparece como overlay -->
       <div v-if="showHistory" class="history-overlay" @click.self="toggleHistoryPanel">
         <div class="history-panel">
           <div class="history-panel-header">
@@ -620,13 +618,10 @@ const selectConversation = async (conversationId: string) => {
 
 const loadConversationMessages = async (conversationId: string) => {
   if (!conversationId) return
-
   resetChat()
   isLoading.value = true
-
   try {
     const conversationMessages = await chatService.getConversationMessages(conversationId)
-
     if (conversationMessages.length > 0) {
       messages.value = conversationMessages
     } else {
@@ -645,6 +640,7 @@ const loadConversationMessages = async (conversationId: string) => {
     }]
   } finally {
     isLoading.value = false
+    showHistory.value = false
     scrollToBottom()
   }
 }
@@ -652,9 +648,7 @@ const loadConversationMessages = async (conversationId: string) => {
 const newChat = async () => {
   resetChat()
   currentConversationId.value = ''
-  if (window.innerWidth < 768) {
-    showHistory.value = false
-  }
+  showHistory.value = false
   messages.value = [{
     content: '¿En qué puedo ayudarte hoy?',
     sender: 'assistant',

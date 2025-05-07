@@ -65,74 +65,69 @@ class ChatService extends BaseApiService {
       const url = `/api/v1/middleware/${apiIntegrationId}/v1/messages`
       const result = await this.get(url, { params })
       if (!result?.data) return []
-      console.log('Mensajes obtenidos:', result.data)
-      
       return result.data
-        .map((msg: any) => {
-          // Cada mensaje contiene tanto query (pregunta del usuario) como answer (respuesta del asistente)
-          // Si el mensaje tiene una query, es un mensaje del usuario
+        .flatMap((msg: any) => {
+          const items: any[] = []
           if (msg.query) {
-            // Procesar archivos adjuntos si existen
-            const attachments = Array.isArray(msg.message_files) 
+            const attachments = Array.isArray(msg.message_files)
               ? msg.message_files.map((file: any) => ({
                   name: file.filename || file.id || 'archivo',
                   type: file.type || 'file',
                   size: file.size || 0,
                   url: file.url || '',
-                  isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
+                  isGraphic:
+                    file.type === 'image' ||
+                    (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
                   belongs_to: file.belongs_to || 'user'
                 }))
-              : [];
-              
-            return {
+              : []
+            items.push({
               content: msg.query,
               sender: 'user',
               time: new Date(msg.created_at * 1000).toISOString(),
               conversation_id: msg.conversation_id,
               message_id: msg.id,
-              attachments: attachments,
+              attachments,
               agent_thoughts: msg.agent_thoughts || [],
               parent_message_id: msg.parent_message_id || '',
               retrieve_resources: msg.retrieve_resources || [],
               status: msg.status || 'normal',
               error: msg.error || null,
               feedback: msg.feedback || null
-            };
-          } 
-          // Si tiene una respuesta answer, es un mensaje del asistente
-          else if (msg.answer) {
-            // Procesar archivos adjuntos si existen
-            const attachments = Array.isArray(msg.message_files) 
+            })
+          }
+          if (msg.answer) {
+            const attachments = Array.isArray(msg.message_files)
               ? msg.message_files.map((file: any) => ({
                   name: file.filename || file.id || 'archivo',
                   type: file.type || 'file',
                   size: file.size || 0,
                   url: file.url || '',
-                  isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
+                  isGraphic:
+                    file.type === 'image' ||
+                    (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
                   belongs_to: file.belongs_to || 'assistant'
                 }))
-              : [];
-              
-            return {
+              : []
+            items.push({
               content: msg.answer,
               sender: 'assistant',
               time: new Date(msg.created_at * 1000).toISOString(),
               conversation_id: msg.conversation_id,
               message_id: msg.id,
-              attachments: attachments,
+              attachments,
               agent_thoughts: msg.agent_thoughts || [],
               parent_message_id: msg.parent_message_id || '',
               retrieve_resources: msg.retrieve_resources || [],
               status: msg.status || 'normal',
               error: msg.error || null,
               feedback: msg.feedback || null
-            };
+            })
           }
-          // Si no tiene ni query ni answer, devolver un objeto vacío (o null)
-          return null;
+          return items
         })
-        .filter(msg => msg !== null) // Eliminar mensajes nulos
-        .reverse();
+        .filter((item) => item != null)
+        .reverse()
     } catch (error) {
       throw error
     }
@@ -222,7 +217,7 @@ class ChatService extends BaseApiService {
                     action: 'remove_temp',
                     tempId: tempId
                   })
-                }, 5000)
+                }, 8000)
               }
             } else if (d.event === 'agent_message' && d.answer) {
               if (streamingMessage.content) {
