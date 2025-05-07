@@ -53,7 +53,6 @@ router.beforeEach(async (to, from, next) => {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-
   // Si hay parámetros de autenticación, sincronizarlos con la URL
   if (id && data) {
     const needsParamSync = to.query.id !== id || to.query.data !== data
@@ -80,15 +79,12 @@ router.beforeEach(async (to, from, next) => {
           return next('/')
         }
       } else {
-        // Si faltan parámetros de autenticación pero la ruta requiere roles, ir al home
         return next('/')
       }
     } catch (err) {
       return next('/')
     }
   }
-
-  // Si todo está bien o la ruta no requiere roles, continuar
   next()
 })
 
