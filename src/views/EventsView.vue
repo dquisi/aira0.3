@@ -405,12 +405,23 @@ async function onPromptChange() {
 
 async function saveEvent() {
   try {
+    if (!currentEvent.value.name?.trim()) {
+      showNotification(t('common.requiredField', { field: t('events.name') }), 'error')
+      return
+    }
+
+    if (!currentEvent.value.prompt_id) {
+      showNotification(t('common.requiredField', { field: t('events.prompt') }), 'error')
+      return
+    }
+
     if (scheduleType.value === 'single') {
       currentEvent.value.cron = ""
       delete currentEvent.value.end_date
     } else {
       delete currentEvent.value.next_execution
     }
+    
     if (editMode.value && currentEvent.value.id) {
       await eventService.update(currentEvent.value as Event)
       showNotification(t('common.updated'), 'success')

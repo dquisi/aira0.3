@@ -171,13 +171,13 @@ const loadCategories = async () => {
 
 // --- Generar prompt ---
 const generatePrompt = async () => {
-  if (!instructions.value.trim()) {
-    showNotification(t('prompts.generator.instructions') + ' ' + t('common.required'), 'error');
+  if (!selectedCategory.value) {
+    showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
     return;
   }
-  
-  if (!selectedCategory.value) {
-    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+
+  if (!instructions.value.trim()) {
+    showNotification(t('common.requiredField', { field: t('prompts.generator.instructions') }), 'error');
     return;
   }
   
@@ -192,18 +192,18 @@ const generatePrompt = async () => {
 };
 // --- Guardar directamente ---
 const savePromptDirectly = async () => {
-  if (!generatedPrompt.value.trim()) {
-    showNotification(t('prompts.form.content') + ' ' + t('common.required'), 'error');
+  if (!selectedCategory.value) {
+    showNotification(t('common.requiredField', { field: t('prompts.form.category') }), 'error');
     return;
   }
   
-  if (!selectedCategory.value) {
-    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+  if (!promptName.value.trim()) {
+    showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
     return;
   }
-
-  if (!promptName.value.trim()) {
-    showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
+  
+  if (!generatedPrompt.value.trim()) {
+    showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
   
