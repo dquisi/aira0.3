@@ -81,7 +81,7 @@ import { useI18n } from 'vue-i18n';
 import vSelect from 'vue-select';
 import promptService from '@/services/PromptService';
 import categoryService from '@/services/CategoryService';
-import { showNotification } from '@/utils/notifications';
+import { showNotification, handleError } from '@/utils/notifications';
 import type { Category } from '@/types';
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -139,34 +139,60 @@ const loadCategories = async () => {
 
 // --- Generar prompt ---
 const generatePrompt = async () => {
-  if (!instructions.value.trim()) return;
+  if (!instructions.value.trim()) {
+    showNotification(t('prompts.generator.instructions') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  
+  if (!selectedCategory.value) {
+    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  
   isGenerating.value = true;
   try {
     generatedPrompt.value = await promptService.generatePrompt(instructions.value);
-  } catch {
-    showNotification(t('prompts.generator.generateError'), 'error');
+  } catch (error) {
+    handleError(error, t('prompts.generator.generateError'));
   } finally {
     isGenerating.value = false;
   }
 };
 // --- Guardar directamente ---
 const savePromptDirectly = async () => {
-  if (!generatedPrompt.value.trim()) return;
+  if (!generatedPrompt.value.trim()) {
+    showNotification(t('prompts.form.content') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  
+  if (!selectedCategory.value) {
+    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  
   isSaving.value = true;
   try {
     const words = generatedPrompt.value.trim().split(/\s+/);
     const title = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+    
     const payload = {
       name: title,
       value: generatedPrompt.value,
       category_id: selectedCategory.value?.value,
       is_favorite: false
     };
+    
+    if (!payload.name.trim()) {
+      showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
+      isSaving.value = false;
+      return;
+    }
+    
     const saved = await promptService.create(payload);
     emit('generated', { ...saved, saved: true });
     emit('close');
-  } catch {
-    showNotification(t('prompts.generator.saveError'), 'error');
+  } catch (error) {
+    handleError(error, t('prompts.generator.saveError'));
   } finally {
     isSaving.value = false;
   }

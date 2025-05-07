@@ -385,10 +385,20 @@ function closeModalAndReload() {
 }
 
 async function save() {
-  if (!isFormValid.value) {
-    showNotification(t('common.error'), 'Campos invalidos');
-    return
+  // Validar campos obligatorios
+  if (!modal.prompt.name?.trim()) {
+    showNotification(t('prompts.form.title') + ' ' + t('common.required'), 'error');
+    return;
   }
+  if (!modal.prompt.value?.trim()) {
+    showNotification(t('prompts.form.content') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  if (!modal.prompt.category_id) {
+    showNotification(t('prompts.form.category') + ' ' + t('common.required'), 'error');
+    return;
+  }
+  
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);
