@@ -31,7 +31,7 @@
         <div class="sidebar-indicator" :style="{ backgroundColor: getStatusColor(event.status) }"></div>
         <div class="card-header">
           <h3 class="card-title">{{ event.name }}</h3>
-          <div class="status-badge" :style="{ backgroundColor: getStatusColor(event.status) }">
+          <div class="card-badge" :style="{ backgroundColor: getStatusColor(event.status) }">
             {{ getStatusText(event.status) }}
           </div>
         </div>
@@ -112,14 +112,6 @@
           <div v-if="scheduleType === 'recurring'" class="form-group">
             <label>{{ t('events.endDate') }}</label>
             <input v-model="currentEvent.end_date" type="datetime-local" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label>{{ t('events.status') }}</label>
-            <select v-model="currentEvent.status" class="form-control">
-              <option v-for="s in statusOptions" :key="s.key" :value="s.key">
-                {{ s.label }}
-              </option>
-            </select>
           </div>
           <div class="form-check">
             <input id="active" v-model="currentEvent.active" type="checkbox" class="form-check-input" />
@@ -240,14 +232,6 @@ const cardActions = computed(() => [
     title: t('common.view'),
     handler: viewEvent
   }
-])
-
-const statusOptions = computed(() => [
-  { key: 'pending', label: t('events.pending') },
-  { key: 'scheduled', label: t('events.scheduled') },
-  { key: 'running', label: t('events.running') },
-  { key: 'completed', label: t('events.completed') },
-  { key: 'failed', label: t('events.failed') }
 ])
 
 const promptOptions = computed(() =>
@@ -486,12 +470,8 @@ function viewEvent(e: Event) {
   currentEvent.value = { ...e }
   showViewModal.value = true
 }
-
-// On mount
 onMounted(() => {
   loadData()
-
-  // Agregar manejador para cerrar modales con la tecla ESC
   const handleEscKey = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       if (showModal.value) showModal.value = false
@@ -499,40 +479,9 @@ onMounted(() => {
       if (showDeleteConfirm.value) showDeleteConfirm.value = false
     }
   }
-
   window.addEventListener('keydown', handleEscKey)
-
-  // Limpiar el event listener cuando el componente se desmonte
   return () => {
     window.removeEventListener('keydown', handleEscKey)
   }
 })
 </script>
-
-<style scoped>
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  color: white;
-  font-weight: 600;
-}
-
-.category-badge {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 400;
-  z-index: 2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 260px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-</style>

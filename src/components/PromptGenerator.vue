@@ -227,9 +227,4 @@ onMounted(loadCategories);
   font-size: 1.5rem;
   color: var(--primary-color);
 }
-
-.text-error {
-  color: #ff5252;
-  font-size: 0.9rem;
-}
 </style>

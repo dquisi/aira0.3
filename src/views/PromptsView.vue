@@ -46,7 +46,7 @@
     <section v-else class="grid">
       <div v-for="p in state.prompts" :key="p.id" class="card">
         <div class="sidebar-indicator" :style="{ backgroundColor: getCat(p).color }"></div>
-        <div class="category-badge" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
+        <div class="card-badge" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
           {{ getCat(p).label }}
         </div>
         <div class="card-header">
@@ -473,22 +473,3 @@ watch(
   }
 );
 </script>
-
-<style scoped>
-.category-badge {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 400;
-  z-index: 2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 260px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-</style>
