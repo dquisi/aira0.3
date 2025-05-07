@@ -69,37 +69,69 @@ class ChatService extends BaseApiService {
       
       return result.data
         .map((msg: any) => {
-          // Determinar si es un mensaje del usuario o del asistente por la presencia de query o answer
-          const isUserMessage = !!msg.query;
-          const content = isUserMessage ? msg.query : msg.answer || '';
-          
-          // Procesar archivos adjuntos si existen
-          const attachments = Array.isArray(msg.message_files) 
-            ? msg.message_files.map((file: any) => ({
-                name: file.filename || file.id || 'archivo',
-                type: file.type || 'file',
-                size: file.size || 0,
-                url: file.url || '',
-                isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
-                belongs_to: file.belongs_to || (isUserMessage ? 'user' : 'assistant')
-              }))
-            : [];
-            
-          return {
-            content: content,
-            sender: isUserMessage ? 'user' : 'assistant',
-            time: new Date(msg.created_at * 1000).toISOString(),
-            conversation_id: msg.conversation_id,
-            message_id: msg.id,
-            attachments: attachments,
-            agent_thoughts: msg.agent_thoughts || [],
-            parent_message_id: msg.parent_message_id || '',
-            retrieve_resources: msg.retrieve_resources || [],
-            status: msg.status || 'normal',
-            error: msg.error || null,
-            feedback: msg.feedback || null
-          };
+          // Cada mensaje contiene tanto query (pregunta del usuario) como answer (respuesta del asistente)
+          // Si el mensaje tiene una query, es un mensaje del usuario
+          if (msg.query) {
+            // Procesar archivos adjuntos si existen
+            const attachments = Array.isArray(msg.message_files) 
+              ? msg.message_files.map((file: any) => ({
+                  name: file.filename || file.id || 'archivo',
+                  type: file.type || 'file',
+                  size: file.size || 0,
+                  url: file.url || '',
+                  isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
+                  belongs_to: file.belongs_to || 'user'
+                }))
+              : [];
+              
+            return {
+              content: msg.query,
+              sender: 'user',
+              time: new Date(msg.created_at * 1000).toISOString(),
+              conversation_id: msg.conversation_id,
+              message_id: msg.id,
+              attachments: attachments,
+              agent_thoughts: msg.agent_thoughts || [],
+              parent_message_id: msg.parent_message_id || '',
+              retrieve_resources: msg.retrieve_resources || [],
+              status: msg.status || 'normal',
+              error: msg.error || null,
+              feedback: msg.feedback || null
+            };
+          } 
+          // Si tiene una respuesta answer, es un mensaje del asistente
+          else if (msg.answer) {
+            // Procesar archivos adjuntos si existen
+            const attachments = Array.isArray(msg.message_files) 
+              ? msg.message_files.map((file: any) => ({
+                  name: file.filename || file.id || 'archivo',
+                  type: file.type || 'file',
+                  size: file.size || 0,
+                  url: file.url || '',
+                  isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
+                  belongs_to: file.belongs_to || 'assistant'
+                }))
+              : [];
+              
+            return {
+              content: msg.answer,
+              sender: 'assistant',
+              time: new Date(msg.created_at * 1000).toISOString(),
+              conversation_id: msg.conversation_id,
+              message_id: msg.id,
+              attachments: attachments,
+              agent_thoughts: msg.agent_thoughts || [],
+              parent_message_id: msg.parent_message_id || '',
+              retrieve_resources: msg.retrieve_resources || [],
+              status: msg.status || 'normal',
+              error: msg.error || null,
+              feedback: msg.feedback || null
+            };
+          }
+          // Si no tiene ni query ni answer, devolver un objeto vacío (o null)
+          return null;
         })
+        .filter(msg => msg !== null) // Eliminar mensajes nulos
         .reverse();
     } catch (error) {
       throw error
