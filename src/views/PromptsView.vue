@@ -75,8 +75,9 @@
         </div>
       </div>
       <div class="lazy-loading-observer" ref="observerEl"></div>
-      <div v-if="state.loadingMore" class="text-center mt-2">
+      <div v-if="state.loadingMore" class="text-center my-4 loading-more-container">
         <div class="spinner"></div>
+        <div class="mt-2">{{ t('prompts.loadingMore') }}</div>
       </div>
     </section>
     <!-- MODAL UNIFICADO -->
@@ -291,6 +292,7 @@ function truncateText(text: string, maxLength: number) {
 async function loadData() {
   state.loading = true;
   try {
+    // Cargar categorías si aún no existen
     if (!state.categories.length) {
       const cats = await categoryService.getAll();
       state.categories = cats.map(c => ({
@@ -300,32 +302,56 @@ async function loadData() {
         api_integration_id: c.api_integration_id
       }));
     }
+    
+    // Reiniciar estado para nueva carga
     state.prompts = [];
     state.hasMore = true;
+    
+    // Cargar primeros elementos
     await loadMore();
   } catch (e) {
     handleError(e, t('errors.loadData'));
   } finally {
     state.loading = false;
+    // Asegurar que el observer se configure después de cargar los datos iniciales
+    nextTick(() => {
+      setupObserver();
+    });
   }
 }
+
 async function loadMore() {
+  // No cargar más si ya está cargando o no hay más elementos
   if (state.loadingMore || !state.hasMore) return;
+  
   state.loadingMore = true;
   try {
+    // Construir filtros según los criterios seleccionados
     const fltrs: any[] = [];
-    if (filters.query) fltrs.push({ field: 'name', operator: 'ilike', value: filters.query });
+    if (filters.query) fltrs.push({ field: 'name', operator: 'ilike', value: `%${filters.query}%` });
     if (filters.category) fltrs.push({ field: 'category_id', operator: '=', value: filters.category.id });
     if (filters.favorites) fltrs.push({ field: 'is_favorite', operator: '=', value: true });
+    
     const res = await promptService.search({
       skip: state.prompts.length,
       limit: 10,
       filters: fltrs
     });
+    
     const items = res.answer || [];
-    state.prompts.push(...items);
-    state.hasMore = items.length === 10;
-    if (!state.hasMore) observer.value?.disconnect();
+    
+    // Añadir los nuevos elementos al array
+    if (items.length > 0) {
+      state.prompts.push(...items);
+    }
+    
+    // Determinar si hay más elementos para cargar
+    state.hasMore = items.length === 10 && res.total > state.prompts.length;
+    
+    // Si no hay más elementos, desconectar el observer
+    if (!state.hasMore) {
+      observer.value?.disconnect();
+    }
   } catch (e) {
     handleError(e, t('errors.loadPrompts'));
   } finally {
@@ -336,11 +362,19 @@ async function loadMore() {
 const observer = ref<IntersectionObserver>();
 const observerEl = ref<HTMLElement>();
 function setupObserver() {
-  observer.value?.disconnect();
+  if (observer.value) observer.value.disconnect();
+  
   observer.value = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && state.hasMore) loadMore();
-  }, { rootMargin: '0px 0px 200px', threshold: 0.1 });
-  if (observerEl.value) observer.value.observe(observerEl.value);
+    if (entries[0].isIntersecting && state.hasMore && !state.loadingMore) {
+      loadMore();
+    }
+  }, { rootMargin: '0px 0px 200px 0px', threshold: 0.1 });
+  
+  nextTick(() => {
+    if (observerEl.value) {
+      observer.value?.observe(observerEl.value);
+    }
+  });
 }
 // --- ACCIONES DE TARJETA ---
 function copyPrompt(p: Prompt) {
@@ -463,17 +497,30 @@ function useSyllabus(s: { title: string; content: string; tags: string[] }) {
 }
 onMounted(() => {
   loadData();
-  nextTick(setupObserver);
+  
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal.isOpen) closeModal();
   });
 });
+
 watch(
   () => [filters.query, filters.category, filters.favorites],
   () => {
+    // Resetear el estado para una nueva búsqueda
     state.prompts = [];
     state.hasMore = true;
-    loadMore();
+    state.loading = true;
+    
+    // Esperar hasta el siguiente ciclo para hacer la búsqueda
+    nextTick(async () => {
+      try {
+        await loadMore();
+      } finally {
+        state.loading = false;
+        // Configurar el observer después de cargar resultados
+        setupObserver();
+      }
+    });
   }
 );
 </script>

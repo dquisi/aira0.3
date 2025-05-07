@@ -17,24 +17,38 @@ class PromptService extends BaseApiService {
 
   async search(criteria: Record<string, any>): Promise<{ answer: Prompt[]; total: number }> {
     try {
+      // Asegurar que existan los filtros
+      const filters = criteria.filters || [];
+      
+      // Añadir filtros requeridos para moodle_course_id y moodle_user_id
       const filter = [
-        ...criteria.filters,
+        ...filters,
         { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
         { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
-      ]
+      ];
+      
+      // Parámetros de búsqueda con paginación
       const searchParams = {
-        skip: criteria.skip || 0,
-        limit: criteria.limit || 10,
-        filters: filter
-      }
-      const result = await this.post('/api/v1/prompt/search', searchParams)
+        skip: parseInt(criteria.skip) || 0,
+        limit: parseInt(criteria.limit) || 10,
+        filters: filter,
+        // Añadir ordenamiento para consistencia en los resultados paginados
+        sort: [{ field: 'created_at', direction: 'desc' }]
+      };
+      
+      // Realizar solicitud a la API
+      const result = await this.post('/api/v1/prompt/search', searchParams);
+      
+      // Normalizar la respuesta
       const response = {
-        answer: result.answer || [],
-        total: typeof result.total === 'number' ? result.total : result.answer?.length || 0
-      }
-      return response
+        answer: Array.isArray(result.answer) ? result.answer : [],
+        total: typeof result.total === 'number' ? result.total : (result.answer?.length || 0)
+      };
+      
+      return response;
     } catch (error) {
-      return { answer: [], total: 0 }
+      console.error('Error en búsqueda de prompts:', error);
+      return { answer: [], total: 0 };
     }
   }
 
@@ -134,12 +148,10 @@ class PromptService extends BaseApiService {
           }
           resolve(importedPrompts)
         } catch (error) {
-          console.error('Error al importar prompts:', error)
           reject(error)
         }
       }
       reader.onerror = () => {
-        console.error('Error al leer el archivo')
         reject(new Error('Error al leer el archivo'))
       }
       reader.readAsText(file)
@@ -155,7 +167,6 @@ class PromptService extends BaseApiService {
       })
       return result.answer || []
     } catch (error) {
-      console.error('Error al obtener todos los prompts:', error)
       return []
     }
   }
