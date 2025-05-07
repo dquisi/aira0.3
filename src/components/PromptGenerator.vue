@@ -171,14 +171,26 @@ const savePromptDirectly = async () => {
 
   isSaving.value = true;
   try {
-    // Generar automáticamente un título usando las primeras palabras del prompt
-    const words = generatedPrompt.value.trim().split(/\s+/);
-    const name = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+    // Extraer título y descripción del formato "título: descripción"
+    let promptName = '';
+    let promptDescription = '';
+    
+    // Buscar el patrón "título: " al inicio del texto
+    const promptText = generatedPrompt.value.trim();
+    const titleMatch = promptText.match(/^(.*?):\s+([\s\S]*)$/);
+    
+    if (titleMatch && titleMatch.length >= 3) {
+      promptName = titleMatch[1].trim();
+      promptDescription = titleMatch[2].trim();
+    } else {
+      // Si no tiene el formato esperado, usar todo como título
+      promptName = promptText.substring(0, 50) + (promptText.length > 50 ? '...' : '');
+    }
 
     const payload = {
-      name: name,
+      name: promptName,
       value: generatedPrompt.value,
-      description: '',
+      description: promptDescription,
       category_id: selectedCategory.value?.value,
       is_favorite: false
     };
@@ -223,89 +235,6 @@ onMounted(loadCategories);
 .template-btn i {
   font-size: 1.5rem;
   color: var(--primary-color);
-}
-
-.preview-form {
-  margin: 1rem 0;
-  border-top: 1px solid var(--card-border);
-  padding-top: 1rem;
-}
-
-.preview-form .form-group {
-  margin-bottom: 0.75rem;
-}
-
-.preview-form label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: 500;
-}
-
-.preview-form input[type="text"],
-.preview-form textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--card-border);
-  border-radius: 4px;
-  background-color: var(--card-background);
-  color: var(--text-color);
-}
-
-.favorite-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--card-border);
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  transition: .4s;
-}
-
-input:checked+.slider {
-  background-color: var(--primary-color);
-}
-
-input:checked+.slider:before {
-  transform: translateX(20px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
 
 .text-error {
