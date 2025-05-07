@@ -3,14 +3,15 @@ import PromptsView from '@/views/PromptsView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
 import ChatView from '@/views/ChatView.vue'
 import EventsView from '@/views/EventsView.vue'
+import HomeView from '@/views/HomeView.vue'
 import { BaseApiService } from '@/services/BaseApiService'
 import { showNotification } from '@/utils/notifications'
 
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/chat',
-    name: 'Home'
+    name: 'Home',
+    component: HomeView
   },
   {
     path: '/chat',
@@ -52,14 +53,10 @@ router.beforeEach(async (to, from, next) => {
   const params = new URLSearchParams(window.location.search)
   const id = params.get('id')
   const data = params.get('data')
-  if (!id || !data) {
-    showNotification('Token Invalidate !!!', 'error')
-  }
+  
+  // Si estamos en la página de inicio, no se requiere verificación previa
   if (to.path === '/') {
-    return next({
-      path: '/chat',
-      query: { id, data }
-    })
+    return next()
   }
   const needsParamSync = to.query.id !== id || to.query.data !== data
   if (needsParamSync) {

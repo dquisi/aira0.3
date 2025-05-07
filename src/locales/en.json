@@ -228,5 +228,17 @@
     "everyNoon": "Every day at noon",
     "twiceDaily": "Twice a day",
     "workingHours": "During working hours"
+  },
+  "home": {
+    "tokenStatus": "Token Status",
+    "tokenValid": "Valid token",
+    "tokenInvalid": "Invalid token. Please log in again.",
+    "permissionStatus": "Permission Status",
+    "hasPermissions": "You have permissions to access the application",
+    "noPermissions": "You don't have the necessary permissions to access the application",
+    "role": "Role",
+    "welcomeTitle": "Welcome to AIRA",
+    "welcomeText": "AIRA (Adaptive Intelligent Response Assistant) is an AI-powered educational platform designed to support personalized learning.<br><br>With AIRA, you can access a virtual assistant that answers questions, generates educational content, and helps you organize your learning tasks. The platform is designed to adapt to different roles and needs within the educational environment.<br><br>Explore the different functionalities according to your role and make the most of this innovative tool to enhance your educational experience.",
+    "startChat": "Start Chat"
   }
 }
