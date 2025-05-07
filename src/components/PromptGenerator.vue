@@ -47,35 +47,6 @@
           <h4>{{ t('prompts.generator.preview') }}</h4>
           <div class="preview-prompt">{{ generatedPrompt }}</div>
           <div class="preview-actions">
-            <div class="preview-form">
-              <div class="form-group">
-                <label>{{ t('prompts.form.title') }} *</label>
-                <input v-model="promptName" class="form-control" type="text" required />
-              </div>
-              <div class="form-group">
-                <label>{{ t('prompts.form.category') }} *</label>
-                <div v-if="selectedCategory">
-                  <div class="category-option selected">
-                    <span class="color-dot" :style="{ backgroundColor: selectedCategory.color }"></span>
-                    {{ selectedCategory.label }}
-                  </div>
-                </div>
-                <div v-else class="text-error">
-                  {{ t('prompts.form.category') + ' ' + t('common.required') }}
-                </div>
-              </div>
-              <div class="form-group">
-                <label>{{ t('common.description') }}</label>
-                <textarea v-model="promptDescription" class="form-control" rows="2"></textarea>
-              </div>
-              <div class="form-group favorite-toggle">
-                <label>{{ t('prompts.card.favorite') }}</label>
-                <label class="switch">
-                  <input type="checkbox" v-model="isFavorite">
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
             <button class="btn-primary" @click="savePromptDirectly" :disabled="isSaving">
               <i class="bi bi-save"></i> {{ t('common.save') }}
             </button>
@@ -197,11 +168,6 @@ const savePromptDirectly = async () => {
     return;
   }
 
-  if (!promptName.value.trim()) {
-    showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
-    return;
-  }
-
   if (!generatedPrompt.value.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
@@ -209,18 +175,16 @@ const savePromptDirectly = async () => {
 
   isSaving.value = true;
   try {
-    // Si no se proporciona un nombre, usar los primeros 3 palabras del prompt como título
-    const name = promptName.value.trim() || (() => {
-      const words = generatedPrompt.value.trim().split(/\s+/);
-      return words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
-    })();
+    // Generar automáticamente un título usando las primeras palabras del prompt
+    const words = generatedPrompt.value.trim().split(/\s+/);
+    const name = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
 
     const payload = {
       name: name,
       value: generatedPrompt.value,
-      description: promptDescription.value,
+      description: '',
       category_id: selectedCategory.value?.value,
-      is_favorite: isFavorite.value
+      is_favorite: false
     };
 
     const saved = await promptService.create(payload);
