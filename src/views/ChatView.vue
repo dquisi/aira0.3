@@ -8,9 +8,6 @@
           <button class="btn-icon d-md-none" @click="toggleHistoryPanel">
             <i class="bi bi-clock-history"></i>
           </button>
-          <button v-if="!isManager" class="btn-icon d-md-none" @click="toggleConfigPanel">
-            <i class="bi bi-gear"></i>
-          </button>
         </div>
       </div>
       <!-- Panel móvil que aparece como overlay -->
@@ -23,43 +20,6 @@
             </button>
           </div>
           <ChatHistory :selected-id="currentConversationId" @select="selectConversation" @new="newChat" />
-        </div>
-      </div>
-      <div v-if="showConfig" class="config-popup config-sidebar">
-        <div class="config-popup-header">
-          <h3>{{ $t('chats.config.title') }}</h3>
-          <button class="btn-icon" @click="toggleConfigPanel">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
-        <div class="config-selectors" v-if="showConfigOptions && !isManager">
-          <div class="selector-group">
-            <label>{{ $t('chats.config.course') }}</label>
-            <select v-model="selectedCourseId" @change="loadResources" class="form-control">
-              <option value="">{{ $t('chats.config.allCourses') }}</option>
-              <option v-for="course in courses" :key="course.id" :value="course.id">
-                {{ course.name }}
-              </option>
-            </select>
-          </div>
-          <div class="selector-group">
-            <label>{{ $t('chats.config.resource') }}</label>
-            <select v-model="selectedResourceId" class="form-control" :disabled="!resources.length">
-              <option value="">{{ $t('chats.config.allResources') }}</option>
-              <option v-for="resource in resources" :key="resource.id" :value="resource.id">
-                {{ resource.name }}
-              </option>
-            </select>
-          </div>
-          <button class="btn-primary btn-config-apply" @click="applyConfigAndClose">
-            {{ $t('chats.config.apply') }}
-          </button>
-        </div>
-        <div v-else class="config-not-available">
-          <p>{{ $t('chats.config.notAvailable') }}</p>
-          <button class="btn-primary" @click="toggleConfigPanel">
-            {{ $t('chats.config.close') }}
-          </button>
         </div>
       </div>
       <div class="messages-container" ref="messagesContainer">
@@ -253,12 +213,7 @@ const selectedFiles = ref<FileAttachment[]>([])
 const fileInput = ref<HTMLInputElement | null>(null)
 const suggestions = ref<string[]>([])
 const currentConversationId = ref('')
-const showConfig = ref(false)
 const showHistory = ref(false)
-const courses = ref<any[]>([])
-const resources = ref<any[]>([])
-const selectedCourseId = ref('')
-const selectedResourceId = ref('')
 const showImageModal = ref(false)
 const currentImage = ref<any>(null)
 const isImageZoomed = ref(false)
@@ -272,10 +227,6 @@ const audioState = ref({
 const toggleImageZoom = () => {
   isImageZoomed.value = !isImageZoomed.value
 }
-const isTeacher = computed(() => BaseApiService.role === 'teacher')
-const isStudent = computed(() => BaseApiService.role === 'student')
-const isManager = computed(() => BaseApiService.role === 'manager')
-const showConfigOptions = computed(() => isTeacher.value || isStudent.value)
 
 const canSendMessage = computed(() => {
   return inputMessage.value.trim() !== '' || selectedFiles.value.length > 0
@@ -397,8 +348,6 @@ const sendMessage = async (msgText?: string) => {
       selectedFiles.value = [];
     }
     const inputParams = {
-      moodle_course_id: selectedCourseId.value || "",
-      moodle_resource_id: selectedResourceId.value || "",
       api_integration_id: apiIntegrationId.value
     };
 
@@ -627,64 +576,13 @@ const copyToClipboard = (text: string) => {
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
-    if (showConfig.value) showConfig.value = false
     if (showHistory.value) showHistory.value = false
     if (showImageModal.value) closeImageModal()
   }
 }
 
-const loadCourses = async () => {
-  try {
-    const coursesData = await chatService.loadCourses()
-    courses.value = coursesData || []
-  } catch (error) {
-    handleError(error, 'cargar cursos')
-  }
-}
-
-const loadResources = async () => {
-  resources.value = []
-  if (!selectedCourseId.value) return
-  try {
-    const resourcesData = await chatService.loadResources(Number(selectedCourseId.value))
-    resources.value = resourcesData || []
-  } catch (error) {
-    handleError(error, 'cargar recursos')
-  }
-}
-
-const toggleConfigPanel = () => {
-  showConfig.value = !showConfig.value
-  if (showConfig.value) showHistory.value = false
-}
-
 const toggleHistoryPanel = () => {
   showHistory.value = !showHistory.value
-  if (showHistory.value) showConfig.value = false
-}
-
-const applyConfigAndClose = () => {
-  resetChat()
-  let configMessage = '';
-
-  if (selectedCourseId.value || selectedResourceId.value) {
-    const courseName = selectedCourseId.value ?
-      courses.value.find(c => c.id === selectedCourseId.value)?.name : ''
-    const resourceName = selectedResourceId.value ?
-      resources.value.find(r => r.id === selectedResourceId.value)?.name : ''
-
-    configMessage = `Filtros aplicados: ${courseName ? `Curso: ${courseName}` : ''}${resourceName ? ` | Recurso: ${resourceName}` : ''}`
-  }
-
-  if (configMessage) {
-    messages.value.push({
-      content: configMessage,
-      sender: 'assistant',
-      time: new Date().toISOString()
-    })
-  }
-
-  toggleConfigPanel()
 }
 
 const selectConversation = async (conversationId: string) => {
@@ -745,7 +643,6 @@ const newChat = async () => {
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown)
-  loadCourses()
 })
 
 onUnmounted(() => {

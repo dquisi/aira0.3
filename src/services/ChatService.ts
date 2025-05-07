@@ -311,35 +311,7 @@ class ChatService extends BaseApiService {
     }
   }
 
-  async loadCourses(): Promise<any[]> {
-    try {
-      const searchParams = {
-        skip: 0,
-        limit: 100,
-        filters: [{ field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }]
-      }
-      const url = `/api/v1/course/search`
-      const result = await this.post(url, searchParams)
-      return result?.answer || []
-    } catch (error) {
-      throw error
-    }
-  }
-
-  async loadResources(courseId: number = 0): Promise<any[]> {
-    try {
-      const searchParams = {
-        skip: 0,
-        limit: 100,
-        filters: [{ field: 'course_id', operator: '=', value: courseId }]
-      }
-      const url = `/api/v1/resource/search`
-      const result = await this.post(url, searchParams)
-      return result?.answer || []
-    } catch (error) {
-      throw error
-    }
-  }
+  // Course and resource methods removed
 }
 
 export default ChatService
