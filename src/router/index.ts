@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import PromptsView from '@/views/PromptsView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
@@ -48,19 +49,27 @@ export const isAuthorized = (allowedRoles: string[]): boolean => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  // Obtener los parámetros originales de la URL
   const originalParams = new URLSearchParams(window.location.search)
   const id = originalParams.get('id') || ''
   const data = originalParams.get('data') || ''
 
-  // Si la ruta es raíz, redireccionar a /chat sin entrar en bucle
-  if (to.path === '/' && from.path !== '/chat') {
-    return next('/chat')
+  // Verificar si estamos yendo a la ruta raíz y redirigir a /chat con parámetros
+  if (to.path === '/') {
+    const query = { ...to.query }
+    if (id) query.id = id
+    if (data) query.data = data
+    return next({ path: '/chat', query })
   }
 
-  // No forzar los parámetros id y data si no existen
-  // pero mantenerlos si están presentes en la URL
-  if ((id || data) && (to.query.id !== id || to.query.data !== data)) {
-    return next({ path: to.path, query: { id, data } })
+  // Para cualquier otra ruta, mantener los parámetros id y data si existen
+  if ((id || data) && (to.path !== '/chat' || to.query.id !== id || to.query.data !== data)) {
+    const query = { ...to.query }
+    if (id) query.id = id
+    if (data) query.data = data
+    if (JSON.stringify(query) !== JSON.stringify(to.query)) {
+      return next({ path: to.path, query })
+    }
   }
 
   try {
@@ -71,7 +80,9 @@ router.beforeEach(async (to, from, next) => {
       }
     }
     next()
-  } catch (error) {}
+  } catch (error) {
+    next('/chat')
+  }
 })
 
 export default router
