@@ -8,6 +8,9 @@
           <button class="btn-icon d-md-none" @click="toggleHistoryPanel">
             <i class="bi bi-clock-history"></i>
           </button>
+          <button class="btn-icon" @click="sendHelpMessage" title="Ayuda">
+            <i class="bi bi-question-circle"></i>
+          </button>
         </div>
       </div>
       <!-- Panel móvil que aparece como overlay -->
@@ -625,6 +628,10 @@ const loadConversationMessages = async (conversationId: string) => {
     isLoading.value = false
     scrollToBottom()
   }
+}
+
+const sendHelpMessage = () => {
+  sendMessage('Hola, quien eres, ¿Listame todo lo que puedes hacer?')
 }
 
 const newChat = async () => {
