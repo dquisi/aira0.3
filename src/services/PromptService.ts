@@ -18,15 +18,15 @@ class PromptService extends BaseApiService {
   async search(criteria: Record<string, any>): Promise<{ answer: Prompt[]; total: number }> {
     try {
       // Asegurar que existan los filtros
-      const filters = criteria.filters || [];
-      
+      const filters = criteria.filters || []
+
       // Añadir filtros requeridos para moodle_course_id y moodle_user_id
       const filter = [
         ...filters,
         { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
         { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
-      ];
-      
+      ]
+
       // Parámetros de búsqueda con paginación
       const searchParams = {
         skip: parseInt(criteria.skip) || 0,
@@ -34,21 +34,21 @@ class PromptService extends BaseApiService {
         filters: filter,
         // Añadir ordenamiento para consistencia en los resultados paginados
         sort: [{ field: 'created_at', direction: 'desc' }]
-      };
-      
+      }
+
       // Realizar solicitud a la API
-      const result = await this.post('/api/v1/prompt/search', searchParams);
-      
+      const result = await this.post('/api/v1/prompt/search', searchParams)
+
       // Normalizar la respuesta
       const response = {
         answer: Array.isArray(result.answer) ? result.answer : [],
-        total: typeof result.total === 'number' ? result.total : (result.answer?.length || 0)
-      };
-      
-      return response;
+        total: typeof result.total === 'number' ? result.total : result.answer?.length || 0
+      }
+
+      return response
     } catch (error) {
-      console.error('Error en búsqueda de prompts:', error);
-      return { answer: [], total: 0 };
+      console.error('Error en búsqueda de prompts:', error)
+      return { answer: [], total: 0 }
     }
   }
 
@@ -188,7 +188,6 @@ class PromptService extends BaseApiService {
         'value' in parsedData
       return this.importPrompts(parsedData, isSinglePrompt)
     } catch (error) {
-      console.error('Error al importar prompts desde texto:', error)
       throw error
     }
   }
@@ -233,7 +232,6 @@ class PromptService extends BaseApiService {
       }
       return importedPrompts
     } catch (error) {
-      console.error('Error al importar prompts:', error)
       throw error
     }
   }
@@ -269,12 +267,12 @@ class PromptService extends BaseApiService {
       const apiUrl = `/api/v1/middleware/5/v1/workflows/run?moodle_user_id=${BaseApiService.moodle_user_id}`
       const payload = {
         inputs: {
-          moodle_course_id: BaseApiService.moodle_course_id,
+          moodle_user_id: BaseApiService.moodle_user_id,
           prompt_query: instructions,
           workflow_function: 'improvePrompts'
         },
         response_mode: 'blocking',
-        user: `${BaseApiService.moodle_user_id}`
+        user: `${BaseApiService.getUserId()}`
       }
       const response = await this.post(apiUrl, payload)
       if (!response || !response.data || !response.data.outputs || !response.data.outputs.result) {
@@ -283,7 +281,6 @@ class PromptService extends BaseApiService {
       const resultString = JSON.parse(response.data.outputs.result)
       return resultString.result.replace(/\"/g, '')
     } catch (error) {
-      console.error('Error al generar prompt:', error)
       throw error
     }
   }
@@ -298,7 +295,7 @@ class PromptService extends BaseApiService {
         )
       }
       const formData = new FormData()
-      formData.append('user', BaseApiService.moodle_user_id)
+      formData.append('user', BaseApiService.getUserId())
       formData.append('file', file)
       const response = await this.post(
         `/api/v1/middleware/5/v1/files/upload?moodle_user_id=${BaseApiService.moodle_user_id}`,
