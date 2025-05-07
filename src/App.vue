@@ -93,8 +93,7 @@ onMounted(async () => {
               <i class="bi bi-palette"></i>
             </button>
             <div v-if="showThemeMenu" class="dropdown-menu">
-              <button @click="changeTheme('light')" class="dropdown-item"
-                :class="{ active: selectedTheme === 'light' }">
+              <button @click="changeTheme('light')" class="dropdown-item" :class="{ active: selectedTheme === 'light' }">
                 <i class="bi bi-sun"></i> {{ t('themes.light') }}
               </button>
               <button @click="changeTheme('highContrast')" class="dropdown-item"
@@ -117,7 +116,6 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-
         <!-- Menú de navegación en el centro -->
         <div class="nav-links">
           <router-link v-for="route in filteredRoutes.slice(1)" :key="route.path" :to="route.path" class="nav-link"

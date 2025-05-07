@@ -657,8 +657,8 @@ const props = defineProps({
     default: null
   },
   apiIntegrationId: {
-    type: String,
-    default: ""
+    type: Number,
+    default: 2
   }
 })
 

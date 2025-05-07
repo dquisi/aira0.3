@@ -35,10 +35,23 @@ class PromptService extends BaseApiService {
 
       return {
         answer: Array.isArray(result.answer) ? result.answer : [],
-        total: typeof result.total === 'number' ? result.total : (result.answer?.length || 0)
+        total: typeof result.total === 'number' ? result.total : result.answer?.length || 0
       }
     } catch (error) {
       return { answer: [], total: 0 }
+    }
+  }
+  async getAll(): Promise<Prompt[]> {
+    try {
+      const result = await this.search({
+        skip: 0,
+        limit: 1000,
+        filters: []
+      })
+      return result.answer || []
+    } catch (error) {
+      console.error('Error obteniendo todos los prompts:', error)
+      return []
     }
   }
 
@@ -146,28 +159,6 @@ class PromptService extends BaseApiService {
       }
       reader.readAsText(file)
     })
-  }
-
-  async getAll(): Promise<Prompt[]> {
-    try {
-      const filters = [
-        { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
-        { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
-      ];
-      
-      const searchParams = {
-        skip: 0,
-        limit: 1000, // Un límite alto para obtener todos los prompts
-        filters: filters,
-        sort: [{ field: 'created_at', direction: 'desc' }]
-      };
-      
-      const result = await this.post('/api/v1/prompt/search', searchParams);
-      return Array.isArray(result.answer) ? result.answer : [];
-    } catch (error) {
-      console.error('Error obteniendo todos los prompts:', error);
-      return [];
-    }
   }
 
   async importFromText(jsonText: string): Promise<Prompt[]> {

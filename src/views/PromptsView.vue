@@ -50,7 +50,7 @@
         <div class="card-header">
           <div class="flex justify-between items-center w-full flex-wrap">
             <h3 class="card-title">{{ p.name }}</h3>
-            <span class="tag" :style="{ backgroundColor: getCat(p).color }">
+            <span class="tag" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
               {{ getCat(p).label }}
             </span>
           </div>
@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="card-body">
-          <p class="card-text">{{ truncateText(p.value, 150) }}</p>
+          <p class="card-text">{{ truncateText(p.value, 100) }}</p>
         </div>
         <div class="card-actions">
           <div>
@@ -116,7 +116,7 @@
                 </template>
               </v-select>
             </div>
-            
+
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
@@ -137,7 +137,7 @@
                 <strong>{{ t('prompts.card.useInChat') }}:</strong>
                 {{ modal.prompt.usage_count || 0 }}
               </div>
-              
+
             </div>
           </template>
           <!-- ELIMINAR -->
@@ -286,7 +286,6 @@ function truncateText(text: string, maxLength: number) {
 async function loadData() {
   state.loading = true;
   try {
-    // Cargar todas las categorías
     if (!state.categories.length) {
       const cats = await categoryService.getAll();
       state.categories = cats.map(c => ({
@@ -296,8 +295,6 @@ async function loadData() {
         api_integration_id: c.api_integration_id
       }));
     }
-    
-    // Cargar todos los prompts
     await loadAllPrompts();
   } catch (e) {
     handleError(e, t('errors.loadData'));
@@ -309,31 +306,21 @@ async function loadData() {
 async function loadAllPrompts() {
   try {
     let allPrompts = await promptService.getAll();
-    
-    // Aplicar filtros en el lado del cliente
     if (filters.query) {
       const query = filters.query.toLowerCase();
-      allPrompts = allPrompts.filter(p => 
-        p.name.toLowerCase().includes(query) || 
+      allPrompts = allPrompts.filter(p =>
+        p.name.toLowerCase().includes(query) ||
         p.value.toLowerCase().includes(query)
       );
     }
-    
     if (filters.category) {
-      allPrompts = allPrompts.filter(p => 
+      allPrompts = allPrompts.filter(p =>
         p.category_id === filters.category.id
       );
     }
-    
     if (filters.favorites) {
       allPrompts = allPrompts.filter(p => p.is_favorite);
     }
-    
-    // Ordenar por fecha de creación (descendente)
-    allPrompts.sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-    
     state.prompts = allPrompts;
   } catch (e) {
     handleError(e, t('errors.loadPrompts'));
@@ -433,7 +420,7 @@ function sendVariables() {
   if (modal.prompt.id) {
     promptService.incrementUsageCount(modal.prompt.id);
   }
-  modal.apiId = getCat(modal.prompt).api_integration_id.toString() || '2';
+  modal.apiId = getCat(modal.prompt).api_integration_id || 2;
   modal.processed = txt;
   modal.type = 'chat';
   modal.isOpen = true;
@@ -460,7 +447,6 @@ function useSyllabus(s: { title: string; content: string; tags: string[] }) {
 }
 onMounted(() => {
   loadData();
-  
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal.isOpen) closeModal();
   });
@@ -470,8 +456,6 @@ watch(
   () => [filters.query, filters.category, filters.favorites],
   () => {
     state.loading = true;
-    
-    // Cargar todos los datos y aplicar filtros en el siguiente ciclo
     nextTick(async () => {
       try {
         await loadAllPrompts();
