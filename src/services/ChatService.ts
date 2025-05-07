@@ -69,6 +69,10 @@ class ChatService extends BaseApiService {
       
       return result.data
         .map((msg: any) => {
+          // Determinar si es un mensaje del usuario o del asistente por la presencia de query o answer
+          const isUserMessage = !!msg.query;
+          const content = isUserMessage ? msg.query : msg.answer || '';
+          
           // Procesar archivos adjuntos si existen
           const attachments = Array.isArray(msg.message_files) 
             ? msg.message_files.map((file: any) => ({
@@ -77,13 +81,13 @@ class ChatService extends BaseApiService {
                 size: file.size || 0,
                 url: file.url || '',
                 isGraphic: file.type === 'image' || (file.url && file.url.match(/\.(png|jpg|jpeg|gif|webp)$/i)),
-                belongs_to: file.belongs_to || (msg.query ? 'user' : 'assistant')
+                belongs_to: file.belongs_to || (isUserMessage ? 'user' : 'assistant')
               }))
             : [];
             
           return {
-            content: msg.query || msg.answer || '',
-            sender: msg.query ? 'user' : 'assistant',
+            content: content,
+            sender: isUserMessage ? 'user' : 'assistant',
             time: new Date(msg.created_at * 1000).toISOString(),
             conversation_id: msg.conversation_id,
             message_id: msg.id,
