@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    allowedHosts: []
+    allowedHosts: ['e4c338b1-80bb-4d69-bb00-ad9e99388252-00-5dxe3878au7z.kirk.replit.dev']
   },
   resolve: {
     alias: {
