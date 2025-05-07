@@ -1,0 +1,263 @@
+{
+  "app": {
+    "title": "AIRA AI",
+    "navigation": {
+      "chat": "Chat",
+      "prompts": "Prompts",
+      "categories": "Categorías"
+    },
+    "language": {
+      "english": "Inglés",
+      "spanish": "Español"
+    },
+    "theme": {
+      "toggle": "Cambiar tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "highContrast": "Alto contraste"
+    }
+  },
+  "display": {
+    "language": {
+      "en": "Inglés",
+      "es": "Español"
+    },
+    "theme": {
+      "light": "Claro",
+      "highContrast": "Alto contraste"
+    }
+  },
+  "themes": {
+    "light": "Claro",
+    "highContrast": "Alto contraste"
+  },
+  "navigation": {
+    "Chat": "Chat",
+    "Prompts": "Prompts",
+    "Categories": "Categorías",
+    "Events": "Eventos"
+  },
+  "common": {
+    "save": "Guardar",
+    "date": "Fecha",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "delete": "Eliminar",
+    "all": "Todos",
+    "update": "Actualizar",
+    "create": "Crear",
+    "edit": "Editar",
+    "view": "Ver",
+    "updated": "Actualizado",
+    "created": "Creado",
+    "edited": "Editado",
+    "deleted": "Eliminado",
+    "copySuccess": "Copiado al portapapeles",
+    "send": "Enviar",
+    "loading": "Cargando...",
+    "search": "Buscar...",
+    "noResults": "No se encontraron resultados",
+    "confirmAction": "¿Estás seguro?",
+    "yes": "Sí",
+    "no": "No",
+    "success": "Éxito",
+    "error": "Error",
+    "required": "Este campo es obligatorio",
+    "new": "Nuevo",
+    "name": "Nombre",
+    "description": "Descripción",
+    "noDescription": "Sin descripción",
+    "confirmDelete": "Confirmar eliminación",
+    "deleteConfirmMessage": "¿Está seguro que desea eliminar",
+    "deleteWarning": "Esta acción no se puede deshacer.",
+    "requiredField": "El campo {field} es obligatorio",
+    "noData": "No hay datos disponibles"
+  },
+  "categories": {
+    "title": "Categorías",
+    "empty": "No hay categorías disponibles",
+    "name": "Nombre",
+    "namePlaceholder": "Ingrese el nombre de la categoría",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Descripción de la categoría (opcional)",
+    "color": "Color",
+    "confirmDelete": "Confirmar eliminación",
+    "deleteWarning": "¿Está seguro que desea eliminar esta categoría?",
+    "apiIntegration": "Integración API",
+    "noApiIntegration": "Sin integración API"
+  },
+  "prompts": {
+    "title": "Mis Prompts",
+    "new": "Nuevo Prompt",
+    "empty": "No hay prompts disponibles",
+    "filter": "Seleccione categoría",
+    "allCategories": "Todas las categorías",
+    "add": "Añadir",
+    "import": "Importar",
+    "search": "Buscar",
+    "noResults": "No se encontraron resultados",
+    "loadMore": "Cargar más",
+    "addPrompt": "Añadir Prompt",
+    "promptTitle": "Título del Prompt",
+    "promptContent": "Agrega las intrucciones del Prompt, puedes agregar variables a traves de corchetes[], esto permite que cada vez que ejecutes puedas cambiar datos variables.",
+    "category": "Categoría",
+    "noCategory": "Sin categoría",
+    "variables": "Variables",
+    "variablesInstruction": "Modifica las variables para insertarlas en el prompt",
+    "actions": {
+      "chat": "Chat",
+      "importExport": "Importar/Exportar",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "filters": {
+      "favorites": "Favoritos"
+    },
+    "noPrompts": "No hay prompts disponibles",
+    "loadingMore": "Cargando más prompts...",
+    "form": {
+      "title": "Título",
+      "content": "Contenido",
+      "category": "Categoría",
+      "tags": "Etiquetas",
+      "addTag": "Agregar etiqueta"
+    },
+    "card": {
+      "favorite": "Favorito",
+      "useInChat": "Usar en chat",
+      "copy": "Copiar"
+    },
+    "generator": {
+      "title": "Generador de Prompts",
+      "category": "Categoría",
+      "instructions": "Instrucciones",
+      "instructionsPlaceholder": "Describe qué tipo de prompt necesitas generar...",
+      "generate": "Generar",
+      "generating": "Generando...",
+      "preview": "Vista Previa",
+      "emptyPreview": "Escribe instrucciones y genera un prompt para ver la vista previa aquí.",
+      "regenerate": "Regenerar",
+      "tryIt": "Prueba con:",
+      "saveError": "Error al guardar el prompt",
+      "templates": {
+        "Examen": "Necesito un prompt para generar preguntas de examen tipo test, desarrollo y casos prácticos para una asignatura universitaria.",
+        "Retroalimentacion": "Quiero un prompt para ofrecer retroalimentación detallada y constructiva a los trabajos de los estudiantes.",
+        "Rubrica": "Necesito un prompt para crear rúbricas de evaluación claras y objetivas para diferentes tipos de trabajos académicos.",
+        "Explicacion": "Quiero un prompt para explicar conceptos complejos de manera sencilla a estudiantes universitarios, con analogías y ejemplos prácticos.",
+        "Ejercicios": "Necesito un prompt para diseñar ejercicios prácticos y desafiantes para reforzar el aprendizaje de los estudiantes.",
+        "Investigacion": "Quiero un prompt para guiar a los estudiantes en el diseño de proyectos de investigación, con metodología y estructura."
+      }
+    },
+    "importExport": {
+      "title": "Importar/Exportar Prompts",
+      "import": "Importar",
+      "importFile": "Importar desde archivo",
+      "importText": "Importar desde texto",
+      "export": "Exportar",
+      "selectFile": "Seleccionar archivo",
+      "exportFile": "Exportar como archivo",
+      "selectAll": "Seleccionar todo",
+      "deselectAll": "Deseleccionar todo",
+      "noData": "No hay prompts para exportar",
+      "dropzone": "Arrastra y suelta un archivo JSON aquí, o haz clic para seleccionar un archivo",
+      "jsonFormat": "Formato de archivo: JSON"
+    },
+    "syllabus": {
+      "title": "Configuración de Sílabo",
+      "periods": "Número de períodos",
+      "daysPerPeriod": "Días por período",
+      "initDate": "Fecha de inicio",
+      "document": "Documento de sílabo (opcional)",
+      "upload": "Subir PDF",
+      "info": "Este genera el silabo en base a la información del archivo o a la configuración actual del curso.",
+      "warning": "Si desea regenerar debe eliminar la configuración actual y volver a generar nuevamente,",
+      "noFileSelected": "Seleccione un Archivo",
+      "allowedFormats": "Formatos Permitidos: PDF, DOCX, DOC, PPT, PPTX, CSV, XLS",
+      "generating": "Generando ...",
+      "generate": "Generar",
+      "invalidateFile": "Archivo inválido"
+    }
+  },
+  "events": {
+    "title": "Eventos",
+    "name": "Nombre del Evento",
+    "status": "Estado",
+    "prompt": "Prompt",
+    "selectPrompt": "Seleccione un prompt",
+    "schedule": "Programación",
+    "scheduleType": "Tipo de Programación",
+    "singleExecution": "Ejecución Única",
+    "recurringExecution": "Ejecución Recurrente",
+    "executionDate": "Fecha de Ejecución",
+    "cronExpression": "Expresión Cron",
+    "customCron": "Programación Personalizada",
+    "everyHour": "Cada hora",
+    "everyDay": "Diariamente",
+    "everyWeek": "Cada semana",
+    "everyMonth": "Primer día de cada mes",
+    "cronHelp": "Las expresiones cron siguen el formato: minuto hora día-del-mes mes día-de-la-semana",
+    "nextExecution": "Próxima Ejecución",
+    "endDate": "Fecha de Finalización",
+    "active": "Activo",
+    "activate": "Activar",
+    "deactivate": "Desactivar",
+    "parameters": "Parámetros",
+    "promptParameters": "Parámetros del Prompt",
+    "noParameters": "Este evento no tiene parámetros configurados.",
+    "pending": "Pendiente",
+    "scheduled": "Programado",
+    "running": "En ejecución",
+    "completed": "Completado",
+    "failed": "Fallido",
+    "enterValue": "Ingrese valor para {param}",
+    "parameterHelp": "Este valor reemplazará el parámetro en el prompt",
+    "noParametersDetected": "No se detectaron parámetros en el prompt seleccionado.",
+    "errorExtractingParameters": "Error al extraer parámetros del prompt",
+    "everyXMinutes": "Cada {minutes} minutos",
+    "everyXHours": "Cada {hours} horas",
+    "atMinute": "En el minuto {minute}",
+    "atHour": "A la hora {hour}",
+    "everyTwoDays": "Cada dos días",
+    "everySunday": "Cada domingo",
+    "everySaturday": "Cada sábado",
+    "activeOnly": "Solo activos",
+    "inactiveOnly": "Solo inactivos",
+    "promptValue": "Valor del prompt",
+    "everyNoon": "Cada día al mediodía",
+    "twiceDaily": "Dos veces al día",
+    "workingHours": "En horario laboral"
+  },
+  "chats": {
+    "title": "Chat",
+    "history": {
+      "title": "Historial",
+      "new": "Nuevo Chat",
+      "loading": "Cargando...",
+      "empty": "No hay chats disponibles"
+    },
+    "config": {
+      "title": "Configuración",
+      "course": "Curso",
+      "allCourses": "Todos los cursos",
+      "resource": "Recurso",
+      "allResources": "Todos los recursos",
+      "apply": "Aplicar",
+      "notAvailable": "La configuración no está disponible para este usuario",
+      "close": "Cerrar"
+    },
+    "welcome": {
+      "title": "¡Bienvenido!",
+      "message": "¿En qué puedo ayudarte hoy?"
+    },
+    "input": { "placeholder": "Escribe un mensaje..." },
+    "audio": "Escuchar mensaje",
+    "copy": "Copiar al portapapeles",
+    "deleteWarning": "¿Seguro que deseas eliminar?",
+    "errorLoad": "Error cargando la conversación",
+    "errorSend": "Error enviando el mensaje",
+    "errorSpeech": "No se pudo procesar el audio",
+    "errorMic": "No se pudo acceder al micrófono",
+    "errorAudio": "Error al reproducir el audio",
+    "copySuccess": "Texto copiado"
+  }
+}

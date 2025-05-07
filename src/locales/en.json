@@ -1,0 +1,268 @@
+{
+  "app": {
+    "title": "AIRA AI",
+    "navigation": {
+      "chat": "Chat",
+      "prompts": "Prompts",
+      "categories": "Categories"
+    },
+    "language": {
+      "english": "English",
+      "spanish": "Spanish"
+    },
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light",
+      "dark": "Dark",
+      "highContrast": "High contrast"
+    }
+  },
+  "display": {
+    "language": {
+      "en": "English",
+      "es": "Spanish"
+    },
+    "theme": {
+      "light": "Light",
+      "highContrast": "High contrast"
+    }
+  },
+  "themes": {
+    "light": "Light",
+    "highContrast": "High contrast"
+  },
+  "navigation": {
+    "Chat": "Chat",
+    "Prompts": "Prompts",
+    "Categories": "Categories",
+    "Events": "Events"
+  },
+  "common": {
+    "save": "Save",
+    "date": "Date",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "all": "All",
+    "update": "Update",
+    "create": "Create",
+    "edit": "Edit",
+    "view": "View",
+    "updated": "Updated",
+    "created": "Created",
+    "edited": "Edited",
+    "deleted": "Deleted",
+    "copySuccess": "Copied to clipboard",
+    "send": "Send",
+    "loading": "Loading...",
+    "search": "Search...",
+    "noResults": "No results found",
+    "confirmAction": "Are you sure?",
+    "yes": "Yes",
+    "no": "No",
+    "success": "Success",
+    "error": "Error",
+    "required": "This field is required",
+    "new": "New",
+    "name": "Name",
+    "description": "Description",
+    "noDescription": "No description",
+    "confirmDelete": "Confirm deletion",
+    "deleteConfirmMessage": "Are you sure you want to delete",
+    "deleteWarning": "This action cannot be undone.",
+    "requiredField": "The {field} field is required",
+    "noData": "No data available"
+  },
+  "categories": {
+    "title": "Categories",
+    "empty": "No categories available",
+    "name": "Name",
+    "namePlaceholder": "Enter category name",
+    "description": "Description",
+    "descriptionPlaceholder": "Category description (optional)",
+    "color": "Color",
+    "confirmDelete": "Confirm deletion",
+    "deleteWarning": "Are you sure you want to delete this category?",
+    "apiIntegration": "API Integration",
+    "noApiIntegration": "No API integration"
+  },
+  "prompts": {
+    "title": "My Prompts",
+    "new": "New Prompt",
+    "empty": "No prompts available",
+    "filter": "Select category",
+    "allCategories": "All categories",
+    "add": "Add",
+    "import": "Import",
+    "search": "Search",
+    "noResults": "No results found",
+    "loadMore": "Load more",
+    "addPrompt": "Add Prompt",
+    "promptTitle": "Prompt Title",
+    "promptContent": "Add the prompt instructions, you can include variables using brackets [], which allows you to change variable data each time you run it.",
+    "category": "Category",
+    "noCategory": "No category",
+    "variables": "Variables",
+    "variablesInstruction": "Edit the variables to insert them into the prompt",
+    "actions": {
+      "chat": "Chat",
+      "importExport": "Import/Export",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "filters": {
+      "favorites": "Favorites"
+    },
+    "noPrompts": "No prompts available",
+    "loadingMore": "Loading more prompts...",
+    "form": {
+      "title": "Title",
+      "content": "Content",
+      "category": "Category",
+      "tags": "Tags",
+      "addTag": "Add tag"
+    },
+    "card": {
+      "favorite": "Favorite",
+      "useInChat": "Use in chat",
+      "copy": "Copy"
+    },
+    "generator": {
+      "title": "Prompt Generator",
+      "category": "Category",
+      "instructions": "Instructions",
+      "instructionsPlaceholder": "Describe what type of prompt you need to generate...",
+      "generate": "Generate",
+      "generating": "Generating...",
+      "preview": "Preview",
+      "emptyPreview": "Type instructions and generate a prompt to see the preview here.",
+      "regenerate": "Regenerate",
+      "tryIt": "Try:",
+      "saveError": "Error saving prompt",
+      "templates": {
+        "Examen": "I need a prompt to generate exam questions: multiple choice, essay, and practical cases for a university course.",
+        "Retroalimentacion": "I want a prompt to provide detailed and constructive feedback on students' work.",
+        "Rubrica": "I need a prompt to create clear and objective assessment rubrics for different types of academic work.",
+        "Explicacion": "I want a prompt to explain complex concepts simply to university students, with analogies and practical examples.",
+        "Ejercicios": "I need a prompt to design practical and challenging exercises to reinforce student learning.",
+        "Investigacion": "I want a prompt to guide students in designing research projects, with methodology and structure."
+      }
+    },
+    "importExport": {
+      "title": "Import/Export Prompts",
+      "import": "Import",
+      "importFile": "Import from file",
+      "importText": "Import from text",
+      "export": "Export",
+      "selectFile": "Select file",
+      "exportFile": "Export as file",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "noData": "No prompts to export",
+      "dropzone": "Drag and drop a JSON file here, or click to select a file",
+      "jsonFormat": "File format: JSON"
+    },
+    "syllabus": {
+      "title": "Syllabus Configuration",
+      "periods": "Number of periods",
+      "daysPerPeriod": "Days per period",
+      "initDate": "Start date",
+      "document": "Syllabus document (optional)",
+      "upload": "Upload PDF",
+      "info": "This generates the syllabus based on the file information or current course settings.",
+      "warning": "If you want to regenerate, you must delete the current configuration and generate again.",
+      "noFileSelected": "Select a file",
+      "allowedFormats": "Allowed formats: PDF, DOCX, DOC, PPT, PPTX, CSV, XLS",
+      "generating": "Generating...",
+      "generate": "Generate",
+      "invalidateFile": "Invalid file"
+    }
+  },
+  "events": {
+    "title": "Events",
+    "name": "Event Name",
+    "status": "Status",
+    "prompt": "Prompt",
+    "selectPrompt": "Select a prompt",
+    "schedule": "Schedule",
+    "scheduleType": "Schedule type",
+    "singleExecution": "Single execution",
+    "recurringExecution": "Recurring execution",
+    "executionDate": "Execution date",
+    "cronExpression": "Cron expression",
+    "customCron": "Custom scheduling",
+    "everyHour": "Every hour",
+    "everyDay": "Daily",
+    "everyWeek": "Every week",
+    "everyMonth": "First day of each month",
+    "cronHelp": "Cron expressions follow the format: minute hour day-of-month month day-of-week",
+    "nextExecution": "Next execution",
+    "endDate": "End date",
+    "active": "Active",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "parameters": "Parameters",
+    "promptParameters": "Prompt parameters",
+    "noParameters": "This event has no configured parameters.",
+    "pending": "Pending",
+    "scheduled": "Scheduled",
+    "running": "Running",
+    "completed": "Completed",
+    "failed": "Failed",
+    "enterValue": "Enter value for {param}",
+    "parameterHelp": "This value will replace the parameter in the prompt",
+    "noParametersDetected": "No parameters detected in the selected prompt.",
+    "errorExtractingParameters": "Error extracting parameters from prompt",
+    "everyXMinutes": "Every {minutes} minutes",
+    "everyXHours": "Every {hours} hours",
+    "atMinute": "At minute {minute}",
+    "atHour": "At hour {hour}",
+    "everyTwoDays": "Every two days",
+    "everySunday": "Every Sunday",
+    "everySaturday": "Every Saturday",
+    "activeOnly": "Active only",
+    "inactiveOnly": "Inactive only",
+    "promptValue": "Prompt value",
+    "everyNoon": "Every day at noon",
+    "twiceDaily": "Twice daily",
+    "workingHours": "During working hours"
+  },
+  "chats": {
+    "title": "Chat",
+    "history": {
+      "title": "History",
+      "new": "New Chat",
+      "loading": "Loading...",
+      "empty": "No chats available"
+    },
+    "config": {
+      "title": "Configuration",
+      "section": "Section",
+      "allSections": "All sections",
+      "resource": "Resource",
+      "allResources": "All resources",
+      "agentType": "Agent type",
+      "agentContent": "Content Agent",
+      "agentAnalytics": "Analytics Agent",
+      "apply": "Apply",
+      "close": "Close",
+      "notAvailable": "Configuration is not available for your role."
+    },
+    "welcome": {
+      "title": "Welcome!",
+      "message": "How can I help you today?"
+    },
+    "input": {
+      "placeholder": "Type a message..."
+    },
+    "audio": "Listen to message",
+    "copy": "Copy to clipboard",
+    "deleteWarning": "Are you sure you want to delete?",
+    "errorLoad": "Error loading conversation",
+    "errorSend": "Error sending message",
+    "errorSpeech": "Could not process audio",
+    "errorMic": "Could not access microphone",
+    "errorAudio": "Error playing audio",
+    "copySuccess": "Text copied"
+  }
+}
