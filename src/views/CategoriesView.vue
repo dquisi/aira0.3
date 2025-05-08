@@ -249,8 +249,6 @@ const getApiIntegrationName = (id: string) => {
 
 onMounted(() => {
   loadCategories()
-  
-  // Agregar manejador para cerrar modales con la tecla ESC
   const handleEscKey = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       if (state.showModal) state.showModal = false
@@ -258,10 +256,7 @@ onMounted(() => {
       if (state.showDeleteConfirm) state.showDeleteConfirm = false
     }
   }
-  
   window.addEventListener('keydown', handleEscKey)
-  
-  // Limpiar el event listener cuando el componente se desmonte
   return () => {
     window.removeEventListener('keydown', handleEscKey)
   }

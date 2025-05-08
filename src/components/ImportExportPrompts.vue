@@ -190,42 +190,10 @@ const exportSelected = () => {
 </script>
 
 <style scoped>
-.tabs {
-  display: flex;
-  margin-bottom: 1rem;
-  width: 100%;
-}
-
-.tab-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--card-border);
-  background-color: var(--card-background);
-  color: var(--text-color);
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  transition: all 0.2s;
-}
-
-.tab-btn:first-child {
-  border-radius: 4px 0 0 4px;
-}
-
-.tab-btn:last-child {
-  border-radius: 0 4px 4px 0;
-}
-
 .tab-btn.active {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
-}
-
-.import-section, 
-.export-section {
-  width: 100%;
-  max-width: 90%;
-  margin: 0 auto;
 }
 
 .prompt-export-item {
@@ -286,54 +254,5 @@ const exportSelected = () => {
   border-radius: 6px;
   background-color: var(--card-background);
   margin-bottom: 1rem;
-}
-
-.flex {
-  display: flex;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-}
-
-.ml-1 {
-  margin-left: 0.25rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-3 {
-  margin-bottom: 0.75rem;
-}
-
-.p-2 {
-  padding: 0.5rem;
-}
-
-.p-3 {
-  padding: 0.75rem;
-}
-
-.mr-1 {
-  margin-right: 0.25rem;
 }
 </style>

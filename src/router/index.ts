@@ -38,7 +38,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/categories',
     name: 'Categories',
     component: CategoriesView,
-    meta: { roles: ['manager'] }
+    meta: { roles: ['manager', 'teacher'] }
   }
 ]
 
