@@ -123,10 +123,6 @@
                 <span class="slider round"></span>
               </label>
             </div>
-            <div class="preview-container">
-              <p>Preview:</p>
-              <div class="prompt-preview">{{ modal.prompt.value }}</div>
-            </div>
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
@@ -157,10 +153,14 @@
           </template>
           <!-- VARIABLES -->
           <template v-else-if="modal.type === 'variables'">
+            <div class="preview-container">
+              <p>Preview:</p>
+              <div class="prompt-preview">{{ getPreviewText() }}</div>
+            </div>
             <p>{{ t('prompts.variablesInstruction') }}</p>
             <div v-for="(pr, i) in modal.params" :key="i" class="form-group">
               <label>{{ pr.name }}</label>
-              <input type="text" v-model="modal.params[i].value" class="form-control" />
+              <input type="text" v-model="modal.params[i].value" class="form-control" @input="updatePreview" />
             </div>
           </template>
           <!-- CHAT -->
@@ -386,6 +386,21 @@ function closeModal() {
 function closeModalAndReload() {
   closeModal();
   loadData();
+}
+
+function getPreviewText() {
+  let txt = modal.prompt.value || '';
+  modal.params.forEach(pr => {
+    if (pr.value) {
+      txt = txt.replace(`[${pr.name}]`, pr.value);
+    }
+  });
+  return txt;
+}
+
+function updatePreview() {
+  // Esta función se llama con cada cambio en los inputs de variables
+  // El preview se actualiza automáticamente gracias a la reactividad de Vue
 }
 
 async function save() {
