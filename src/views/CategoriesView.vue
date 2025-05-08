@@ -32,10 +32,14 @@
           </p>
         </div>
         <div class="card-actions">
-          <button class="btn-icon" @click="editCategory(category)" :title="t('common.edit')">
+          <button class="btn-icon" @click="editCategory(category)" :title="t('common.edit')" 
+            :disabled="category.moodle_user_id === 0" 
+            :class="{ 'disabled-action': category.moodle_user_id === 0 }">
             <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn-icon" @click="confirmDelete(category)" :title="t('common.delete')">
+          <button class="btn-icon" @click="confirmDelete(category)" :title="t('common.delete')" 
+            :disabled="category.moodle_user_id === 0" 
+            :class="{ 'disabled-action': category.moodle_user_id === 0 }">
             <i class="bi bi-trash"></i>
           </button>
           <button class="btn-icon" @click="viewCategory(category)" :title="t('common.view')">
@@ -131,6 +135,8 @@ import { showNotification, handleError } from '@/utils/notifications'
 import { Category } from '@/types'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog.vue'
 
+// Estilos CSS añadidos en <style> al final del archivo
+
 const { t } = useI18n()
 
 const state = reactive({
@@ -219,12 +225,22 @@ const saveCategory = async () => {
 }
 
 const editCategory = (category: Category) => {
+  // Verificar si la categoría tiene moodle_user_id = 0
+  if (category.moodle_user_id === 0) {
+    showNotification(t('common.noPermission'), 'error')
+    return
+  }
   state.currentCategory = { ...category }
   state.editMode = true
   state.showModal = true
 }
 
 const confirmDelete = (category: Category) => {
+  // Verificar si la categoría tiene moodle_user_id = 0
+  if (category.moodle_user_id === 0) {
+    showNotification(t('common.noPermission'), 'error')
+    return
+  }
   state.currentCategory = { ...category }
   state.showDeleteConfirm = true
 }
@@ -262,3 +278,17 @@ onMounted(() => {
   }
 })
 </script>
+<style scoped>
+.disabled-action {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled-action:hover {
+  background-color: transparent;
+}
+
+button:disabled {
+  pointer-events: none;
+}
+</style>
