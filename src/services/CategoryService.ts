@@ -32,7 +32,6 @@ export class CategoryService extends BaseApiService {
         answer: result.answer || [],
         total: typeof result.count === 'number' ? result.count : result.answer?.length || 0
       }
-      console.log(response)
       return response
     } catch (error) {
       return { answer: [], total: 0 }
@@ -53,10 +52,12 @@ export class CategoryService extends BaseApiService {
   }
 
   async create(category: Partial<Category>): Promise<Category> {
+    category.moodle_user_id = BaseApiService.moodle_user_id
     return this.post<Category>('/api/v1/category', category)
   }
 
   async update(category: Category): Promise<Category> {
+    category.moodle_user_id = BaseApiService.moodle_user_id
     return this.put<Category>(`/api/v1/category/${category.id}`, category)
   }
 

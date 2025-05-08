@@ -26,17 +26,15 @@
           <p class="card-text">
             {{ category.description || t('common.noDescription') }}
           </p>
-          <p>{{ category.moodle_user_id }}</p>
           <p class="card-text">
-            <span>{{ t('common.status') }}: {{ category.active ? t('common.active') : t('common.inactive') }}</span>
+            <span> <strong>{{ t('categories.status') }}: </strong> {{ Number(category.active) }}</span>
           </p>
           <p v-if="category.api_integration_id" class="card-text">
             <strong>{{ t('categories.apiIntegration') }}:</strong>
             {{ getApiIntegrationName(category.api_integration_id) }}
           </p>
         </div>
-        <div class="card-actions" v-if="category.moodle_user_id != 0">
-
+        <div class="card-actions" v-if="category.moodle_user_id !== 0">
           <button class=" btn-icon" @click="editCategory(category)" :title="t('common.edit')">
             <i class="bi bi-pencil"></i>
           </button>
@@ -83,14 +81,9 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="active-toggle">{{ t('common.status') }}</label>
+            <label for="active-toggle">{{ t('categories.status') }}</label>
             <div>
-              <input 
-                type="checkbox" 
-                id="active-toggle" 
-                v-model="state.currentCategory.active"
-              />
-              <span>{{ state.currentCategory.active ? t('common.active') : t('common.inactive') }}</span>
+              <input type="checkbox" id="active-toggle" v-model="state.currentCategory.active" />
             </div>
           </div>
         </div>
@@ -108,25 +101,23 @@
     <div v-if="state.showViewModal" class="modal-overlay" @click.self="state.showViewModal = false">
       <div class="modal">
         <div class="modal-header">
-          <h3>{{ t('common.view') }} {{ t('categories.title') }}</h3>
+          <h3> {{ state.currentCategory.name }}</h3>
           <button class="btn-icon" @click="state.showViewModal = false">
             ✖️
           </button>
         </div>
         <div class="modal-body">
-          <p><strong>{{ t('categories.name') }}:</strong> {{ state.currentCategory.name }}</p>
           <p><strong>{{ t('categories.description') }}:</strong> {{ state.currentCategory.description || '-' }}</p>
-          <p>
-            <strong>{{ t('categories.color') }}:</strong>
-            <span class="color-option" :style="{ backgroundColor: state.currentCategory.color }"></span>
-          </p>
           <p v-if="state.currentCategory.api_integration_id">
             <strong>{{ t('categories.apiIntegration') }}:</strong>
             {{ getApiIntegrationName(state.currentCategory.api_integration_id) }}
           </p>
           <p>
-            <strong>{{ t('common.status') }}:</strong>
-            {{ state.currentCategory.active ? t('common.active') : t('common.inactive') }}
+            <strong>{{ t('categories.status') }}:</strong>
+            {{ state.currentCategory.active }}
+          </p>
+          <p :style="{ backgroundColor: state.currentCategory.color }">
+            <strong>{{ t('categories.color') }} </strong>
           </p>
         </div>
         <div class="modal-footer">
@@ -275,6 +266,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

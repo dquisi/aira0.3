@@ -75,6 +75,7 @@
   },
   "categories": {
     "title": "Categorías",
+    "status": "Estado",
     "empty": "No hay categorías disponibles",
     "name": "Nombre",
     "namePlaceholder": "Ingrese el nombre de la categoría",
