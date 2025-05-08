@@ -127,7 +127,6 @@ class ChatService extends BaseApiService {
           return items
         })
         .filter((item) => item != null)
-        .reverse()
     } catch (error) {
       throw error
     }

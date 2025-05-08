@@ -1,6 +1,6 @@
 
 <template>
-  <div class="import-export-container">
+  <div>
     <div class="tabs mb-3">
       <button class="tab-btn" :class="{ active: activeTab === 'import' }" @click="activeTab = 'import'">
         {{ $t('prompts.importExport.import') }}
@@ -190,10 +190,6 @@ const exportSelected = () => {
 </script>
 
 <style scoped>
-.import-export-container {
-  width: 100%;
-}
-
 .prompt-export-item {
   padding: 0.5rem;
   border-bottom: 1px solid var(--card-border);
