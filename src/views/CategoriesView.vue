@@ -59,15 +59,16 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label for="name">{{ t('categories.name') }} * (max 50)</label>
-            <input id="name" v-model="state.currentCategory.name" type="text" class="form-control" maxlength="50" required />
-            <small v-if="state.currentCategory.name">{{ state.currentCategory.name.length }}/50</small>
+            <label for="name">{{ t('categories.name') }} *</label>
+            <input id="name" v-model="state.currentCategory.name" type="text" class="form-control" maxlength="50"
+              required />
+            <small>{{ state.currentCategory.name.length }}/50</small>
           </div>
           <div class="form-group">
-            <label for="description">{{ t('categories.description') }} (max 250)</label>
-            <textarea id="description" v-model="state.currentCategory.description" class="form-control" 
-              maxlength="250" rows="3"></textarea>
-            <small v-if="state.currentCategory.description">{{ state.currentCategory.description?.length || 0 }}/250</small>
+            <label for="description">{{ t('categories.description') }}</label>
+            <textarea id="description" v-model="state.currentCategory.description" class="form-control" maxlength="250"
+              rows="3"></textarea>
+            <small>{{ state.currentCategory.description?.length || 0 }}/250</small>
           </div>
           <div class="form-group">
             <label>{{ t('categories.color') }} *</label>
@@ -203,14 +204,6 @@ const saveCategory = async () => {
   try {
     if (!state.currentCategory.name) {
       showNotification(t('common.requiredField', { field: t('categories.name') }), 'error')
-      return
-    }
-    if (state.currentCategory.name.length > 50) {
-      showNotification(t('common.maxLengthExceeded', { field: t('categories.name'), max: 50 }), 'error')
-      return
-    }
-    if (state.currentCategory.description && state.currentCategory.description.length > 250) {
-      showNotification(t('common.maxLengthExceeded', { field: t('categories.description'), max: 250 }), 'error')
       return
     }
     if (!state.currentCategory.color) {

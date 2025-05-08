@@ -27,7 +27,9 @@
         <div class="form-group">
           <label>{{ t('prompts.generator.instructions') }} *</label>
           <textarea v-model="instructions" class="form-control" rows="6"
-            :placeholder="t('prompts.generator.instructionsPlaceholder')"></textarea>
+            :placeholder="t('prompts.generator.instructionsPlaceholder')" maxlength="500"></textarea>
+          <small>{{ instructions?.length || 0
+          }}/500</small>
         </div>
 
         <!-- Plantillas de prueba -->

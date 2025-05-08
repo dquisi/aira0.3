@@ -105,16 +105,16 @@
               </v-select>
             </div>
             <div class="form-group">
-              <label>{{ t('prompts.form.title') }} * (max 50)</label>
+              <label>{{ t('prompts.form.title') }} *</label>
               <input type="text" v-model="modal.prompt.name" class="form-control" maxlength="50"
                 :placeholder="t('prompts.promptTitle')" />
-              <small v-if="modal.prompt.name">{{ modal.prompt.name?.length || 0 }}/50</small>
+              <small>{{ modal.prompt.name?.length || 0 }}/50</small>
             </div>
             <div class="form-group">
-              <label>{{ t('prompts.form.content') }} * (max 250)</label>
-              <textarea v-model="modal.prompt.value" rows="5" class="form-control" maxlength="250"
+              <label>{{ t('prompts.form.content') }} *</label>
+              <textarea v-model="modal.prompt.value" rows="5" class="form-control" maxlength="500"
                 :placeholder="t('prompts.promptContent')"></textarea>
-              <small v-if="modal.prompt.value">{{ modal.prompt.value?.length || 0 }}/250</small>
+              <small>{{ modal.prompt.value?.length || 0 }}/500</small>
             </div>
             <div class="form-group favorite-toggle">
               <label>{{ t('prompts.card.favorite') }}</label>
@@ -393,16 +393,8 @@ async function save() {
     showNotification(t('common.requiredField', { field: t('prompts.form.title') }), 'error');
     return;
   }
-  if (modal.prompt.name.length > 50) {
-    showNotification(t('common.maxLengthExceeded', { field: t('prompts.form.title'), max: 50 }), 'error');
-    return;
-  }
   if (!modal.prompt.value?.trim()) {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
-    return;
-  }
-  if (modal.prompt.value.length > 250) {
-    showNotification(t('common.maxLengthExceeded', { field: t('prompts.form.content'), max: 250 }), 'error');
     return;
   }
   try {
