@@ -241,7 +241,21 @@ const modal = reactive({
 });
 
 // --- OPCIONES DE CATEGORÍA ---
-const categoryOptions = computed(() => state.categories);
+const categoryOptions = computed(() => {
+  const userRole = BaseApiService.getUserRole();
+  const isManager = userRole === 'manager' || userRole === 'admin';
+  
+  // Si el usuario es manager o admin, puede ver todas las categorías
+  // Si no, solo puede ver categorías donde moodle_user_id coincide con el suyo o es 0 (categorías públicas)
+  if (isManager) {
+    return state.categories;
+  } else {
+    return state.categories.filter(c => {
+      const category = state.categories.find(cat => cat.id === c.id);
+      return !category || category.moodle_user_id === 0 || category.moodle_user_id === BaseApiService.moodle_user_id;
+    });
+  }
+});
 
 // --- TÍTULOS DE MODAL ---
 const modalTitles: Record<string, string> = {
@@ -416,6 +430,17 @@ async function save() {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
+  
+  // Verificar permisos de categoría
+  const userRole = BaseApiService.getUserRole();
+  const isManager = userRole === 'manager' || userRole === 'admin';
+  const category = state.categories.find(c => c.id === modal.prompt.category_id);
+  
+  if (!isManager && category && category.moodle_user_id !== 0 && category.moodle_user_id !== BaseApiService.moodle_user_id) {
+    showNotification(t('prompts.noPermission'), 'error');
+    return;
+  }
+  
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);

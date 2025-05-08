@@ -182,4 +182,15 @@ export class BaseApiService {
       throw error
     }
   }
+
+  static getApiIntegrationIdByRole(): string {
+    // Default a 2 si no se encuentra
+    return this.apiIntegrationId || '2';
+  }
+
+  static getUserRole(): string {
+    // Implementación básica - en un sistema real, esto vendría de su sistema de autenticación
+    // Posibles valores: 'admin', 'manager', 'editor', 'viewer'
+    return localStorage.getItem('user_role') || 'editor';
+  }
 }

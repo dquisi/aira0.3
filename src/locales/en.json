@@ -119,6 +119,7 @@
     },
     "noPrompts": "No prompts available",
     "loadingMore": "Loading more prompts...",
+    "noPermission": "You don't have permission to create or edit prompts in this category",
     "form": {
       "title": "Title",
       "content": "Content",

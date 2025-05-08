@@ -120,6 +120,7 @@
     },
     "noPrompts": "No hay prompts disponibles",
     "loadingMore": "Cargando más prompts...",
+    "noPermission": "No tienes permisos para crear o editar prompts en esta categoría",
     "form": {
       "title": "Título",
       "content": "Contenido",
