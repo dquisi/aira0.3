@@ -68,7 +68,7 @@
               rows="3"></textarea>
           </div>
           <div class="form-group">
-            <label>{{ t('categories.color') }}</label>
+            <label>{{ t('categories.color') }} *</label>
             <input type="color" v-model="state.currentCategory.color" class="form-control"
               style="height: 40px; padding: 5px;" />
           </div>
@@ -199,8 +199,12 @@ const viewCategory = (category: Category) => {
 
 const saveCategory = async () => {
   try {
-    if (!state.currentCategory.name.trim()) {
+    if (!state.currentCategory.name) {
       showNotification(t('common.requiredField', { field: t('categories.name') }), 'error')
+      return
+    }
+    if (!state.currentCategory.color) {
+      showNotification(t('common.requiredField', { field: t('categories.color') }), 'error')
       return
     }
     if (!state.currentCategory.api_integration_id) {
