@@ -24,6 +24,7 @@ export interface Category {
   instance_id: number | null
   kind?: 'professor' | 'student' | 'all'
   api_integration_id: number
+  moodle_user_id: number
 }
 
 export interface FileAttachment {

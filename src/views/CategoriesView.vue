@@ -16,7 +16,7 @@
       <p>{{ t('common.loading') }}</p>
     </div>
     <div v-else class="grid">
-      <div v-for="category in filteredCategories" :key="category.id" class="card">
+      <div v-for="category in  filteredCategories " :key="category.id" class="card">
         <div class="sidebar-indicator" :style="{ backgroundColor: category.color }"></div>
         <div class="card-header">
           <h3 class="card-title">{{ category.name }}</h3>
@@ -26,16 +26,18 @@
           <p class="card-text">
             {{ category.description || t('common.noDescription') }}
           </p>
+          <p>{{ category.moodle_user_id }}</p>
           <p v-if="category.api_integration_id" class="card-text">
             <strong>{{ t('categories.apiIntegration') }}:</strong>
             {{ getApiIntegrationName(category.api_integration_id) }}
           </p>
         </div>
-        <div class="card-actions">
-          <button v-if="category.moodle_user_id !== 0" class="btn-icon" @click="editCategory(category)" :title="t('common.edit')">
+        <div class="card-actions" v-if="category.moodle_user_id != 0">
+
+          <button class=" btn-icon" @click="editCategory(category)" :title="t('common.edit')">
             <i class="bi bi-pencil"></i>
           </button>
-          <button v-if="category.moodle_user_id !== 0" class="btn-icon" @click="confirmDelete(category)" :title="t('common.delete')">
+          <button class="btn-icon" @click="confirmDelete(category)" :title="t('common.delete')">
             <i class="bi bi-trash"></i>
           </button>
           <button class="btn-icon" @click="viewCategory(category)" :title="t('common.view')">
@@ -72,7 +74,7 @@
           <div class="form-group">
             <label>{{ t('categories.apiIntegration') }} *</label>
             <select v-model="state.currentCategory.api_integration_id" class="form-control">
-              <option v-for="api in state.apiIntegrations" :key="api.id" :value="api.id">
+              <option v-for=" api  in  state.apiIntegrations " :key="api.id" :value="api.id">
                 {{ api.name }}
               </option>
             </select>
@@ -144,13 +146,7 @@ const state = reactive({
   showDeleteConfirm: false,
   editMode: false,
   searchQuery: '',
-  currentCategory: {
-    id: null as number | null,
-    name: '',
-    description: '',
-    color: '#4CAF50',
-    api_integration_id: ''
-  }
+  currentCategory: {} as Category
 })
 
 const filteredCategories = computed(() => {
@@ -180,13 +176,7 @@ const loadCategories = async () => {
 }
 
 const openAddModal = () => {
-  state.currentCategory = {
-    id: null,
-    name: '',
-    description: '',
-    color: '#4CAF50',
-    api_integration_id: ''
-  }
+  state.currentCategory = {}
   state.editMode = false
   state.showModal = true
 }

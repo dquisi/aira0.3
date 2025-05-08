@@ -19,7 +19,8 @@ export class CategoryService extends BaseApiService {
     try {
       const filter = [
         ...criteria.filters,
-        { field: 'moodle_user_id', operator: 'in', value: [0, BaseApiService.moodle_user_id] }
+        { field: 'moodle_user_id', operator: 'in', value: [0, BaseApiService.moodle_user_id] },
+        { field: 'active', operator: '=', value: true }
       ]
       const searchParams = {
         skip: criteria.skip || 0,
@@ -31,6 +32,7 @@ export class CategoryService extends BaseApiService {
         answer: result.answer || [],
         total: typeof result.count === 'number' ? result.count : result.answer?.length || 0
       }
+      console.log(response)
       return response
     } catch (error) {
       return { answer: [], total: 0 }
