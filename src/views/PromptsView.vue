@@ -123,6 +123,10 @@
                 <span class="slider round"></span>
               </label>
             </div>
+            <div class="preview-container">
+              <p>Preview:</p>
+              <div class="prompt-preview">{{ modal.prompt.value }}</div>
+            </div>
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
@@ -475,3 +479,52 @@ watch(
   }
 );
 </script>
+
+<style scoped>
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.favorite-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.favorite-toggle label:first-child {
+  margin-right: 10px;
+}
+
+.preview-container {
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.prompt-preview {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  min-height: 60px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: white;
+  margin-top: 8px;
+}
+</style>
