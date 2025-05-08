@@ -61,7 +61,7 @@
     "yes": "Yes",
     "no": "No",
     "success": "Success",
-    "error": "Error",
+    "error": "An error has occurred",
     "required": "This field is required",
     "new": "New",
     "name": "Name",
@@ -71,7 +71,11 @@
     "deleteConfirmMessage": "Are you sure you want to delete",
     "deleteWarning": "This action cannot be undone.",
     "requiredField": "The {field} field is required",
-    "noData": "No data available"
+    "maxLengthExceeded": "The {field} field cannot exceed {max} characters",
+    "noData": "No data available",
+    "saveError": "Error saving",
+    "deleteError": "Error deleting",
+    "loadError": "Error loading data"
   },
   "categories": {
     "title": "Categories",

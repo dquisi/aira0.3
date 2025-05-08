@@ -77,8 +77,14 @@
         </header>
         <div class="modal-body">
           <div class="form-group">
-            <label>{{ t('events.name') }} *</label>
-            <input v-model="currentEvent.name" type="text" class="form-control" required />
+            <label>{{ t('events.name') }} * (max 50)</label>
+            <input v-model="currentEvent.name" type="text" class="form-control" maxlength="50" required />
+            <small v-if="currentEvent.name">{{ currentEvent.name.length || 0 }}/50</small>
+          </div>
+          <div class="form-group">
+            <label>{{ t('events.description') }} (max 250)</label>
+            <textarea v-model="currentEvent.description" class="form-control" maxlength="250" rows="3"></textarea>
+            <small v-if="currentEvent.description">{{ currentEvent.description.length || 0 }}/250</small>
           </div>
           <div class="form-group">
             <label>{{ t('events.prompt') }} *</label>
@@ -187,6 +193,7 @@ const cronError = ref<string | null>(null)
 const currentEvent = ref<Partial<Event>>({
   id: null,
   name: '',
+  description:'',
   prompt_id: null,
   next_execution: new Date(Date.now() + 3600000)
     .toISOString()
@@ -277,7 +284,8 @@ const viewFields = computed(() => [
       Object.entries(inp)
         .map(([k, v]) => `${k}: ${v}`)
         .join(', ')
-  }
+  },
+    { key: 'description', label: t('events.description') }
 ])
 
 // Filtrado
@@ -355,6 +363,7 @@ function openAddModal() {
   currentEvent.value = {
     id: null,
     name: '',
+    description:'',
     prompt_id: null,
     next_execution: new Date(Date.now() + 3600000)
       .toISOString()

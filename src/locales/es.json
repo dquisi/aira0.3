@@ -71,7 +71,11 @@
     "deleteConfirmMessage": "¿Está seguro que desea eliminar",
     "deleteWarning": "Esta acción no se puede deshacer.",
     "requiredField": "El campo {field} es obligatorio",
-    "noData": "No hay datos disponibles"
+    "noData": "No hay datos disponibles",
+    "maxLengthExceeded": "El campo {field} no puede superar los {max} caracteres",
+    "saveError": "Error al guardar",
+    "deleteError": "Error al eliminar",
+    "loadError": "Error al cargar los datos"
   },
   "categories": {
     "title": "Categorías",
