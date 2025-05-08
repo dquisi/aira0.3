@@ -27,6 +27,11 @@
             {{ category.description || t('common.noDescription') }}
           </p>
           <p>{{ category.moodle_user_id }}</p>
+          <p class="card-text">
+            <span :class="category.active ? 'status-active' : 'status-inactive'">
+              {{ category.active ? t('common.active') : t('common.inactive') }}
+            </span>
+          </p>
           <p v-if="category.api_integration_id" class="card-text">
             <strong>{{ t('categories.apiIntegration') }}:</strong>
             {{ getApiIntegrationName(category.api_integration_id) }}
@@ -79,6 +84,20 @@
               </option>
             </select>
           </div>
+          <div class="form-group">
+            <label>{{ t('common.status') }}</label>
+            <div class="toggle-switch">
+              <input 
+                type="checkbox" 
+                id="active-toggle" 
+                v-model="state.currentCategory.active"
+              />
+              <label for="active-toggle" class="switch">
+                <span class="slider round"></span>
+              </label>
+              <span class="toggle-label">{{ state.currentCategory.active ? t('common.active') : t('common.inactive') }}</span>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button class="btn-secondary" @click="state.showModal = false">
@@ -109,6 +128,12 @@
           <p v-if="state.currentCategory.api_integration_id">
             <strong>{{ t('categories.apiIntegration') }}:</strong>
             {{ getApiIntegrationName(state.currentCategory.api_integration_id) }}
+          </p>
+          <p>
+            <strong>{{ t('common.status') }}:</strong>
+            <span :class="state.currentCategory.active ? 'status-active' : 'status-inactive'">
+              {{ state.currentCategory.active ? t('common.active') : t('common.inactive') }}
+            </span>
           </p>
         </div>
         <div class="modal-footer">
@@ -176,7 +201,9 @@ const loadCategories = async () => {
 }
 
 const openAddModal = () => {
-  state.currentCategory = {}
+  state.currentCategory = {
+    active: true // Por defecto, las nuevas categorías están activas
+  }
   state.editMode = false
   state.showModal = true
 }
@@ -254,3 +281,64 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* Estilos para el toggle switch */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.toggle-switch input {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.switch {
+  cursor: pointer;
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  display: block;
+  border-radius: 25px;
+  position: relative;
+}
+
+.slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .switch .slider {
+  transform: translateX(25px);
+}
+
+input:checked + .switch {
+  background-color: var(--primary-color);
+}
+
+.toggle-label {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+/* Estados de activación */
+.status-active {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+</style>
