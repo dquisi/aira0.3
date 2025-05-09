@@ -62,25 +62,9 @@
         </div>
         <div class="card-actions">
           <div>
-            <div v-for="(act, i) in cardActionGroups[0]" :key="i" class="relative">
-              <!-- Si es el botón de copiar, mostrar dropdown -->
-              <button v-if="act.action === 'copy'" class="btn-icon" @click.stop="toggleCopyMenu(p)">
-                <i :class="typeof act.icon === 'function' ? act.icon(p) : act.icon"></i>
-              </button>
-              <!-- Menú desplegable para el botón de copiar -->
-              <div v-if="act.action === 'copy' && activeCopyMenu === p.id" class="copy-menu">
-                <button class="copy-option" @click.stop="copyPromptText(p)">
-                  <i class="bi bi-clipboard-fill"></i> {{ t('common.copyText') }}
-                </button>
-                <button class="copy-option" @click.stop="exportPromptJson(p)">
-                  <i class="bi bi-download"></i> {{ t('common.export') }}
-                </button>
-              </div>
-              <!-- Otros botones -->
-              <button v-else class="btn-icon" @click.stop="act.handler(p)">
-                <i :class="typeof act.icon === 'function' ? act.icon(p) : act.icon"></i>
-              </button>
-            </div>
+            <button v-for="(act, i) in cardActionGroups[0]" :key="i" class="btn-icon" @click.stop="act.handler(p)">
+              <i :class="typeof act.icon === 'function' ? act.icon(p) : act.icon"></i>
+            </button>
           </div>
           <div>
             <button v-for="(act, i) in cardActionGroups[1]" :key="i" class="btn-icon" @click="act.handler(p)">
@@ -294,24 +278,6 @@ const headerActions = [
   { type: 'syllabus', icon: 'bi bi-file-earmark-text', title: t('prompts.syllabus.title') },
   { type: 'importExport', icon: 'bi bi-arrow-down-up', title: t('prompts.importExport.title') }
 ];
-const activeCopyMenu = ref<string | null>(null);
-
-const toggleCopyMenu = (p: Prompt) => {
-  if (activeCopyMenu.value === p.id) {
-    activeCopyMenu.value = null;
-  } else {
-    activeCopyMenu.value = p.id;
-    // Cerrar el menú al hacer clic fuera
-    setTimeout(() => {
-      const closeMenu = () => {
-        activeCopyMenu.value = null;
-        document.removeEventListener('click', closeMenu);
-      };
-      document.addEventListener('click', closeMenu);
-    }, 100);
-  }
-};
-
 const copyPromptText = (p: Prompt) => {
   try {
     navigator.clipboard.writeText(p.value);
@@ -319,20 +285,12 @@ const copyPromptText = (p: Prompt) => {
   } catch (error) {
     handleError(error, t('common.error'));
   }
-  activeCopyMenu.value = null;
-};
-
-const exportPromptJson = (p: Prompt) => {
-  if (promptService.copyToClipboard(p)) {
-    showNotification(t('common.exportSuccess'), 'success');
-  }
-  activeCopyMenu.value = null;
 };
 
 const cardActionGroups = [
   [
     { icon: (p: Prompt) => p.is_favorite ? 'bi bi-star-fill' : 'bi bi-star', handler: toggleFav, action: 'favorite' },
-    { icon: 'bi bi-clipboard', handler: toggleCopyMenu, action: 'copy' },
+    { icon: 'bi bi-clipboard', handler: copyPromptText, action: 'copy' },
     { icon: 'bi bi-play-circle', handler: usePrompt, action: 'use' }
   ],
   [
@@ -639,40 +597,6 @@ watch(
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.relative {
-  position: relative;
-}
-
-.copy-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 5px;
-  background-color: var(--card-background);
-  border: 1px solid var(--card-border);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  width: 150px;
-}
-
-.copy-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  width: 100%;
-  text-align: left;
-  transition: background-color 0.2s;
-  color: var(--text-color);
-}
-
-.copy-option:hover {
-  background-color: var(--secondary-color);
-}
-
-.copy-option i {
-  font-size: 14px;
-}
+/* Eliminados los estilos del menú desplegable que ya no se utilizan */
 </style>
 
