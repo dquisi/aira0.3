@@ -13,6 +13,7 @@ export interface Prompt {
   created_at: string
   instance_id: number
   general: boolean
+
 }
 
 export interface Category {

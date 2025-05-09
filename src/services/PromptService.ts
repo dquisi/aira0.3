@@ -1,8 +1,31 @@
+import { Console } from 'console'
 import { BaseApiService } from './BaseApiService'
 import type { Prompt } from '@/types'
+import { CategoryService } from './CategoryService'
 
 class PromptService extends BaseApiService {
   private static instance: PromptService
+
+  private roleMap: Record<number, string> = {
+    1: 'Manager',
+    2: 'Docente',
+    4: 'Estudiante'
+  }
+
+  private async fetchPrompts(params: {
+    skip: number
+    limit: number
+    filters: any[]
+    sort: any[]
+  }): Promise<Prompt[]> {
+    try {
+      const res = await this.post<{ answer: Prompt[] }>('/api/v1/prompt/search', params)
+      return Array.isArray(res.answer) ? res.answer : []
+    } catch (e) {
+      console.error('Error fetching prompts', e)
+      return []
+    }
+  }
 
   private constructor() {
     super()
@@ -15,32 +38,61 @@ class PromptService extends BaseApiService {
     return PromptService.instance
   }
 
-  async search(criteria: Record<string, any>): Promise<{ answer: Prompt[]; total: number }> {
-    try {
-      const filters = criteria.filters || []
-      const filter = [
-        ...filters,
-        { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
-        { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
-      ]
-
-      const searchParams = {
-        skip: parseInt(String(criteria.skip)) || 0,
-        limit: parseInt(String(criteria.limit)) || 10,
-        filters: filter,
-        sort: [{ field: 'created_at', direction: 'desc' }]
-      }
-
-      const result = await this.post('/api/v1/prompt/search', searchParams)
-
-      return {
-        answer: Array.isArray(result.answer) ? result.answer : [],
-        total: typeof result.total === 'number' ? result.total : result.answer?.length || 0
-      }
-    } catch (error) {
-      return { answer: [], total: 0 }
+  async search(criteria: Record<string, any> = {}): Promise<{ answer: Prompt[]; total: number }> {
+    const skip = Number(criteria.skip) || 0
+    const limit = Number(criteria.limit) || 1000
+    const sort = criteria.sort ?? [{ field: 'created_at', direction: 'desc' }]
+    const filters = criteria.filters ?? []
+    const userFilters = [
+      ...filters,
+      { field: 'moodle_course_id', operator: '=', value: BaseApiService.moodle_course_id },
+      { field: 'moodle_user_id', operator: '=', value: BaseApiService.moodle_user_id }
+    ]
+    const tasks: Promise<Prompt[]>[] = [
+      this.fetchPrompts({ skip: 0, limit: 1000, filters: userFilters, sort })
+    ]
+    tasks.push(this.searchRolePrompts(filters, sort))
+    const results = (await Promise.all(tasks)).flat()
+    const uniqueMap = new Map<string, Prompt>()
+    results.forEach((p) => uniqueMap.set(p.id, p))
+    const uniquePrompts = Array.from(uniqueMap.values())
+    return {
+      answer: uniquePrompts.slice(skip, skip + limit),
+      total: uniquePrompts.length
     }
   }
+
+  async searchRolePrompts(baseFilters: any[] = [], sort: any[] = []): Promise<Prompt[]> {
+    const roleId = BaseApiService.getApiIntegrationIdByRole()
+    const categoryName = roleId ? this.roleMap[roleId] : undefined
+    if (!roleId || !categoryName) {
+      return []
+    }
+    try {
+      const catRes = await CategoryService.getInstance().search({
+        filters: [
+          { field: 'api_integration_id', operator: '=', value: roleId },
+          { field: 'name', operator: '=', value: categoryName }
+        ],
+        limit: 1000
+      })
+      const ids = catRes.answer.map((c) => c.id)
+      if (!ids.length) {
+        return []
+      }
+
+      return await this.fetchPrompts({
+        skip: 0,
+        limit: 1000,
+        filters: [...baseFilters, { field: 'category_id', operator: 'in', value: ids }],
+        sort
+      })
+    } catch (e) {
+      console.error('Error obteniendo role categories', e)
+      return []
+    }
+  }
+
   async getAll(): Promise<Prompt[]> {
     try {
       const result = await this.search({

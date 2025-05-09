@@ -44,7 +44,7 @@
       <p>{{ t('prompts.noPrompts') }}</p>
     </div>
     <section v-else class="grid">
-      <div v-for="p in state.prompts" :key="p.id" class="card">
+      <div v-for="(p, i) in state.prompts" :key="p.id || i" class="card">
         <div class="sidebar-indicator" :style="{ backgroundColor: getCat(p).color }"></div>
         <div class="card-badge" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
           {{ getCat(p).label }}
@@ -52,6 +52,9 @@
         <div class="card-header">
           <div class="flex justify-between items-center w-full flex-wrap">
             <h3 class="card-title">{{ p.name }}</h3>
+            <span v-if="i === state.prompts.length - 1" class="new-badge">Nuevo Prompt</span>
+
+
           </div>
           <div class="flex items-center gap-1">
             <i class="bi bi-play-circle"></i> {{ p.usage_count || 0 }}
@@ -160,7 +163,7 @@
             <p>{{ t('prompts.variablesInstruction') }}</p>
             <div v-for="(pr, i) in modal.params" :key="i" class="form-group">
               <label>{{ pr.name }}</label>
-              <input type="text" v-model="modal.params[i].value" class="form-control" @input="updatePreview" />
+              <input type="text" v-model="modal.params[i].value" class="form-control" />
             </div>
           </template>
           <!-- CHAT -->
@@ -197,10 +200,10 @@
 <script setup lang="ts">
 import {
   reactive,
-  computed,
   onMounted,
   watch,
-  nextTick
+  nextTick,
+  computed
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import vSelect from 'vue-select';
@@ -223,6 +226,10 @@ const state = reactive({
   loading: true
 });
 
+const categoryOptions = computed(() => {
+  return state.categories;
+});
+
 // --- FILTROS ---
 const filters = reactive({
   query: '',
@@ -240,22 +247,6 @@ const modal = reactive({
   apiId: BaseApiService.getApiIntegrationIdByRole()
 });
 
-// --- OPCIONES DE CATEGORÍA ---
-const categoryOptions = computed(() => {
-  const userRole = BaseApiService.getUserRole();
-  const isManager = userRole === 'manager' || userRole === 'admin';
-  
-  // Si el usuario es manager o admin, puede ver todas las categorías
-  // Si no, solo puede ver categorías donde moodle_user_id coincide con el suyo o es 0 (categorías públicas)
-  if (isManager) {
-    return state.categories;
-  } else {
-    return state.categories.filter(c => {
-      const category = state.categories.find(cat => cat.id === c.id);
-      return !category || category.moodle_user_id === 0 || category.moodle_user_id === BaseApiService.moodle_user_id;
-    });
-  }
-});
 
 // --- TÍTULOS DE MODAL ---
 const modalTitles: Record<string, string> = {
@@ -324,22 +315,39 @@ async function loadData() {
 async function loadAllPrompts() {
   try {
     let allPrompts = await promptService.getAll();
+    const currentMoodleUserId = BaseApiService.moodle_user_id;
+    const roleApiIntegrationId = BaseApiService.getApiIntegrationIdByRole();
+    let relevantPrompts = allPrompts.filter(p => {
+      const isOwnPrompt = p.moodle_user_id === currentMoodleUserId;
+
+      let isRoleCategoryPrompt = false;
+      const categoryOfPrompt = state.categories.find(cat => cat.id === p.category_id);
+      if (categoryOfPrompt && categoryOfPrompt.api_integration_id !== undefined) {
+        isRoleCategoryPrompt = categoryOfPrompt.api_integration_id === roleApiIntegrationId;
+      }
+      const isPublicOrGeneralPrompt = p.moodle_user_id === 0 || p.general === true;
+
+      return isOwnPrompt || isRoleCategoryPrompt || isPublicOrGeneralPrompt;
+    });
+
     if (filters.query) {
       const query = filters.query.toLowerCase();
-      allPrompts = allPrompts.filter(p =>
+      relevantPrompts = relevantPrompts.filter(p =>
         p.name.toLowerCase().includes(query) ||
-        p.value.toLowerCase().includes(query)
+        (p.value && p.value.toLowerCase().includes(query))
       );
     }
-    if (filters.category) {
-      allPrompts = allPrompts.filter(p =>
+    if (filters.category && filters.category.id) {
+      relevantPrompts = relevantPrompts.filter(p =>
         p.category_id === filters.category.id
       );
     }
     if (filters.favorites) {
-      allPrompts = allPrompts.filter(p => p.is_favorite);
+      relevantPrompts = relevantPrompts.filter(p => p.is_favorite);
     }
-    state.prompts = allPrompts;
+
+    state.prompts = relevantPrompts;
+
   } catch (e) {
     handleError(e, t('common.noData'));
   }
@@ -412,10 +420,6 @@ function getPreviewText() {
   return txt;
 }
 
-function updatePreview() {
-  // Esta función se llama con cada cambio en los inputs de variables
-  // El preview se actualiza automáticamente gracias a la reactividad de Vue
-}
 
 async function save() {
   if (!modal.prompt.category_id) {
@@ -430,17 +434,7 @@ async function save() {
     showNotification(t('common.requiredField', { field: t('prompts.form.content') }), 'error');
     return;
   }
-  
-  // Verificar permisos de categoría
-  const userRole = BaseApiService.getUserRole();
-  const isManager = userRole === 'manager' || userRole === 'admin';
-  const category = state.categories.find(c => c.id === modal.prompt.category_id);
-  
-  if (!isManager && category && category.moodle_user_id !== 0 && category.moodle_user_id !== BaseApiService.moodle_user_id) {
-    showNotification(t('prompts.noPermission'), 'error');
-    return;
-  }
-  
+
   try {
     if (modal.prompt.id) {
       await promptService.update(modal.prompt as Prompt);
@@ -567,4 +561,23 @@ watch(
   background-color: white;
   margin-top: 8px;
 }
+
+.new-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+  top: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
 </style>
+

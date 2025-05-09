@@ -62,7 +62,7 @@
             <label for="name">{{ t('categories.name') }} *</label>
             <input id="name" v-model="state.currentCategory.name" type="text" class="form-control" maxlength="50"
               required />
-            <small>{{ state.currentCategory.name.length }}/50</small>
+            <small>{{ state.currentCategory.name?.length || 0 }}/50</small>
           </div>
           <div class="form-group">
             <label for="description">{{ t('categories.description') }}</label>

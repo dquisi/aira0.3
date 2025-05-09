@@ -131,38 +131,42 @@
       <div class="input-container">
         <div class="input-wrapper">
           <button class="btn-icon" @click="toggleRecording" :class="{ 'recording': isRecording }"
-            :disabled="audioState.status === 'playing' || isAudioProcessing">
+            :disabled="isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i :class="isRecording ? 'bi bi-stop-fill' : 'bi bi-mic'"></i>
           </button>
           <textarea v-model="inputMessage" class="message-input" :placeholder="$t('chats.input.placeholder')"
             @keydown.enter.exact.prevent="sendMessage()"
             :disabled="audioState.status === 'playing' || isAudioProcessing"></textarea>
-          <button class="btn-icon" @click="sendMessage($t('chats.help'))" title="Ayuda">
+          <button class="btn-icon" @click="sendMessage($t('chats.help'))" :disabled="isLoading" title="Ayuda">
             <i class="bi bi-question-circle"></i>
           </button>
           <div class="dropdown">
-            <button class="btn-icon" @click="showFavoritePrompts = !showFavoritePrompts">
+            <button class="btn-icon" @click="showRolePrompts = !showRolePrompts" :disabled="isLoading">
               <i class="bi bi-bookmark-heart"></i>
             </button>
-            <div v-if="showFavoritePrompts" class="dropdown-menu">
-              <ul class="favorite-prompts-list" v-if="favoritePrompts.length > 0">
-                <li v-for="prompt in favoritePrompts" :key="prompt.id" class="favorite-prompt-item"
+            <div v-if="showRolePrompts" class="dropdown-menu">
+              <ul class="favorite-prompts-list" v-if="rolePrompts.length > 0">
+                <li v-for="prompt in rolePrompts" :key="prompt.id" class="favorite-prompt-item"
                   @click="usePrompt(prompt)">
                   {{ prompt.name }}
                 </li>
               </ul>
-              <p v-else class="no-favorites">No hay prompts favoritos aún.</p>
+              <p v-else class="no-favorites">No hay prompts por rol aún.</p>
             </div>
           </div>
           <button class="btn-icon" @click="triggerFileInput"
-            :disabled="audioState.status === 'playing' || isAudioProcessing">
+            :disabled="isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-paperclip"></i>
           </button>
-          <input type="file" ref="fileInput" @change="handleFileSelect" class="file-input" multiple
-            :disabled="audioState.status === 'playing' || isAudioProcessing" />
+          <input type="file" ref="fileInput" @change="handleFileSelect" class="file-input" multiple :disabled="isLoading ||
+
+
+
+            audioState.status === 'playing' || isAudioProcessing" />
           <button class="btn-icon" @click="sendMessage()"
             :disabled="!canSendMessage || isLoading || audioState.status === 'playing' || isAudioProcessing">
-            <i class="bi bi-send"></i>
+            <i v-if="isLoading" class="bi bi-arrow-repeat loading-spinner-icon"></i>
+            <i v-if="!isLoading" class="bi bi-send"></i>
           </button>
         </div>
         <div v-if="selectedFiles.length" class="selected-files">
@@ -236,8 +240,8 @@ const isImageZoomed = ref(false)
 const apiIntegrationId = ref(null)
 const isRecording = ref(false)
 const lastMessage = ref('')
-const favoritePrompts = ref<Prompt[]>([])
-const showFavoritePrompts = ref(false)
+const rolePrompts = ref<Prompt[]>([])
+const showRolePrompts = ref(false)
 
 const audioState = ref({
   status: 'idle',
@@ -704,28 +708,21 @@ const getFilePreviewUrl = (file: any) => {
 }
 
 onMounted(async () => {
-  await loadFavoritePrompts()
+  await loadRolePrompts()
 })
 
-const loadFavoritePrompts = async () => {
+const loadRolePrompts = async () => {
   try {
-    const allPrompts = await promptService.search({
-      skip: 0,
-      limit: 10,
-      filters: [
-        { field: 'is_favorite', operator: '=', value: true }
-      ]
-    })
-    favoritePrompts.value = allPrompts.answer
+    const allPrompts = await promptService.searchRolePrompts()
+    rolePrompts.value = allPrompts
   } catch (error) {
-    console.error('Error cargando prompts favoritos:', error)
+    console.error('Error cargando prompts por Rol:', error)
   }
 }
 
 const usePrompt = async (prompt: Prompt) => {
   try {
     inputMessage.value = prompt.value
-    //sendMessage(prompt.value)
   } catch (error) {
     console.error('Error al usar el prompt:', error)
   }
@@ -783,5 +780,19 @@ const usePrompt = async (prompt: Prompt) => {
 
 .favorite-prompt-item:hover {
   background-color: var(--hover-color);
+}
+
+.loading-spinner-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
