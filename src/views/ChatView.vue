@@ -38,23 +38,7 @@
             'assistant-content': message.sender === 'assistant',
             'temp-content': message.isTemporary
           }">
-            <div class="message-actions" v-if="message.sender === 'assistant' && !message.isTemporary">
-              <button class="audio-btn" @click="playMessageAudio(message.content, message.message_id)"
-                :disabled="audioState.status === 'playing' || audioState.status === 'loading'"
-                :class="{ 'playing': audioState.status === 'playing' && audioState.currentMessageId === message.message_id }"
-                title="Escuchar mensaje">
-                <i
-                  :class="audioState.status === 'playing' && audioState.currentMessageId === message.message_id ? 'bi bi-pause-fill' : 'bi bi-volume-up'"></i>
-                <span v-if="audioState.status === 'loading' && audioState.currentMessageId === message.message_id"
-                  class="loading-indicator"></span>
-              </button>
-              <button class="copy-btn" @click="copyToClipboard(message.content)" title="Copiar al portapapeles">
-                <i class="bi bi-clipboard"></i>
-              </button>
-              <button class="btn-icon" @click="sendMessage($t('chats.graphics'))" title="Generar gráficos">
-                <i class="bi bi-graph-up"></i>
-              </button>
-            </div>
+
             <div v-if="message.sender === 'assistant'" class="markdown-content">
               <div v-if="message.isTemporary" class="processing-message">
                 <div v-if="message.isHtml" v-html="message.content" class="html-content"></div>
@@ -105,6 +89,23 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="message-actions" v-if="message.sender === 'assistant' && !message.isTemporary">
+              <button class="audio-btn" @click="playMessageAudio(message.content, message.message_id)"
+                :disabled="audioState.status === 'playing' || audioState.status === 'loading'"
+                :class="{ 'playing': audioState.status === 'playing' && audioState.currentMessageId === message.message_id }"
+                title="Escuchar mensaje">
+                <i
+                  :class="audioState.status === 'playing' && audioState.currentMessageId === message.message_id ? 'bi bi-pause-fill' : 'bi bi-volume-up'"></i>
+                <span v-if="audioState.status === 'loading' && audioState.currentMessageId === message.message_id"
+                  class="loading-indicator"></span>
+              </button>
+              <button class="copy-btn" @click="copyToClipboard(message.content)" title="Copiar al portapapeles">
+                <i class="bi bi-clipboard"></i>
+              </button>
+              <button class="btn-icon" @click="sendMessage($t('chats.graphics'))" title="Generar gráficos">
+                <i class="bi bi-graph-up"></i>
+              </button>
             </div>
             <div class="message-time">{{ formatTime(message.time) }}</div>
           </div>
@@ -158,11 +159,8 @@
             :disabled="isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i class="bi bi-paperclip"></i>
           </button>
-          <input type="file" ref="fileInput" @change="handleFileSelect" class="file-input" multiple :disabled="isLoading ||
-
-
-
-            audioState.status === 'playing' || isAudioProcessing" />
+          <input type="file" ref="fileInput" @change="handleFileSelect" class="file-input" multiple
+            :disabled="isLoading || audioState.status === 'playing' || isAudioProcessing" />
           <button class="btn-icon" @click="sendMessage()"
             :disabled="!canSendMessage || isLoading || audioState.status === 'playing' || isAudioProcessing">
             <i v-if="isLoading" class="bi bi-arrow-repeat loading-spinner-icon"></i>
@@ -421,18 +419,26 @@ const triggerFileInput = () => {
   if (fileInput.value) fileInput.value.click()
 }
 
-const handleFileSelect = (event: Event) => {
-  const input = event.target as HTMLInputElement
+const handleFileSelect = (e: Event) => {
+  const input = e.target as HTMLInputElement
   if (!input.files) return
-  Array.from(input.files).forEach(file => {
-    selectedFiles.value.push({
-      file,
-      name: file.name,
-      type: file.type,
-      size: file.size
-    })
-  })
-  if (fileInput.value) fileInput.value.value = ''
+  selectedFiles.value = Array.from(input.files)
+    .filter(f =>
+      f.type.startsWith('image/') ||
+      f.type === 'application/pdf'
+    )
+    .map(f => ({
+      file: f,
+      name: f.name,
+      type: f.type,
+      size: f.size
+    }))
+  if (Array.from(input.files).some(f =>
+    !f.type.startsWith('image/') && f.type !== 'application/pdf'
+  )) {
+    showNotification('Solo se permiten imágenes o PDFs', 'error')
+  }
+  input.value = ''
 }
 
 const removeFile = (index: number) => {

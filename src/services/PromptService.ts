@@ -3,11 +3,12 @@ import { BaseApiService } from './BaseApiService'
 import type { Prompt } from '@/types'
 import { CategoryService } from './CategoryService'
 
+
+
 class PromptService extends BaseApiService {
   private static instance: PromptService
-
   private roleMap: Record<number, string> = {
-    1: 'Manager',
+    1: 'Administrador',
     2: 'Docente',
     4: 'Estudiante'
   }
@@ -64,7 +65,7 @@ class PromptService extends BaseApiService {
 
   async searchRolePrompts(baseFilters: any[] = [], sort: any[] = []): Promise<Prompt[]> {
     const roleId = BaseApiService.getApiIntegrationIdByRole()
-    const categoryName = roleId ? this.roleMap[roleId] : undefined
+    const categoryName = BaseApiService.role
     if (!roleId || !categoryName) {
       return []
     }
@@ -164,6 +165,7 @@ class PromptService extends BaseApiService {
     }
   }
 
+  
   copyToClipboard(prompt: Prompt): boolean {
     try {
       const essentialData = {

@@ -99,21 +99,22 @@ function onFileChange(e: Event) {
   showNotification(t('prompts.syllabus.invalidFile'), 'error')
   state.file = null
 }
-
 async function generateSyllabus() {
-  state.isGenerating = true
-  try {
-    state.content = await promptService.generateSyllabus(
-      state.config,
-      state.file || null
-    )
-    showNotification(t('prompts.syllabus.generated'), 'success')
-  } catch (err) {
-    handleError(err, t('common.error') || 'Error')
-  } finally {
-    state.isGenerating = false
+  if (state.config.periods_count > 0 && state.config.days_per_period > 0) {
+    state.isGenerating = true
+    try {
+      state.content = await promptService.generateSyllabus(state.config, state.file)
+      showNotification(t('prompts.syllabus.generated'), 'success')
+    } catch (err) {
+      handleError(err, t('common.error') || 'Error')
+    } finally {
+      state.isGenerating = false
+    }
+  } else {
+    showNotification(t('common.invalidNumber'), 'error')
   }
 }
+
 </script>
 
 <style scoped>

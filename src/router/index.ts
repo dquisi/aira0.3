@@ -20,25 +20,25 @@ export const routes: RouteRecordRaw[] = [
     path: '/chat',
     name: 'Chat',
     component: ChatView,
-    meta: { roles: ['teacher', 'manager', 'student'] }
+    meta: { roles: ['Docente', 'Administrador', 'Estudiante'] }
   },
   {
     path: '/events',
     name: 'Events',
     component: EventsView,
-    meta: { roles: ['manager'] }
+    meta: { roles: ['Administrador'] }
   },
   {
     path: '/prompts',
     name: 'Prompts',
     component: PromptsView,
-    meta: { roles: ['teacher', 'manager'] }
+    meta: { roles: ['Docente', 'Administrador'] }
   },
   {
     path: '/categories',
     name: 'Categories',
     component: CategoriesView,
-    meta: { roles: ['manager', 'teacher'] }
+    meta: { roles: ['Administrador', 'Docente'] }
   }
 ]
 

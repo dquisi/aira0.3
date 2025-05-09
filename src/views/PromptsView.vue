@@ -44,7 +44,7 @@
       <p>{{ t('prompts.noPrompts') }}</p>
     </div>
     <section v-else class="grid">
-      <div v-for="(p, i) in state.prompts" :key="p.id || i" class="card">
+      <div v-for="(p, i) in state.prompts" :key="p.id || i" class="card" @click="openView(p)">
         <div class="sidebar-indicator" :style="{ backgroundColor: getCat(p).color }"></div>
         <div class="card-badge" :style="{ backgroundColor: getCat(p).color, color: 'white' }">
           {{ getCat(p).label }}
@@ -52,12 +52,9 @@
         <div class="card-header">
           <div class="flex justify-between items-center w-full flex-wrap">
             <h3 class="card-title">{{ p.name }}</h3>
-            <span v-if="i === state.prompts.length - 1" class="new-badge">Nuevo Prompt</span>
-
-
           </div>
           <div class="flex items-center gap-1">
-            <i class="bi bi-play-circle"></i> {{ p.usage_count || 0 }}
+            <i class="bi bi-reception-4"></i> {{ p.usage_count || 0 }}
           </div>
         </div>
         <div class="card-body">
@@ -65,7 +62,7 @@
         </div>
         <div class="card-actions">
           <div>
-            <button v-for="(act, i) in cardActionGroups[0]" :key="i" class="btn-icon" @click="act.handler(p)">
+            <button v-for="(act, i) in cardActionGroups[0]" :key="i" class="btn-icon" @click.stop="act.handler(p)">
               <i :class="typeof act.icon === 'function' ? act.icon(p) : act.icon"></i>
             </button>
           </div>
@@ -81,10 +78,25 @@
     <div v-if="modal.isOpen" class="modal-overlay" @click.self="closeModal">
       <div class="modal" :class="{ 'modal-lg': ['importExport', 'chat'].includes(modal.type) }">
         <header class="modal-header">
-          <h2>{{ modalTitles[modal.type] }}</h2>
-          <button class="btn-icon" @click="closeModal">
-            <i class="bi bi-x-lg"></i>
-          </button>
+          <h2>
+            <template v-if="modal.type === 'view'">
+              {{ modal.prompt.name }}
+            </template>
+            <template v-else>
+              {{ modalTitles[modal.type] }}
+            </template>
+          </h2>
+          <div class="flex items-center gap-x-2">
+            <template v-if="modal.type === 'view'">
+              <button @click="usePrompt(modal.prompt)" :title="t('common.execute', 'Ejecutar')">
+                <i class="bi bi-play mr-1"></i>
+                <span>{{ t('common.execute', 'Ejecutar') }}</span>
+              </button>
+            </template>
+            <button class="btn-icon" @click="closeModal" :title="t('common.close', 'Cerrar')">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
         </header>
         <div class="modal-body">
           <!-- FORMULARIO -->
@@ -129,12 +141,10 @@
           </template>
           <!-- VISTA DETALLE -->
           <template v-else-if="modal.type === 'view'">
-            <h3>{{ t('prompts.form.title') }}: </h3>{{ modal.prompt.name }}
-            <h4>{{ t('prompts.form.content') }}: </h4>{{ modal.prompt.value }}
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1">
                 <strong>{{ t('prompts.form.category') }}:</strong>
-                <span class="tag" :style="{ backgroundColor: getCat(modal.prompt).color }">
+                <span class="tag-chip" :style="{ backgroundColor: getCat(modal.prompt).color }">
                   {{ getCat(modal.prompt).label }}
                 </span>
               </div>
@@ -146,8 +156,9 @@
                 <strong>{{ t('prompts.card.useInChat') }}:</strong>
                 {{ modal.prompt.usage_count || 0 }}
               </div>
-
             </div>
+            <h4 class="mt-3 font-semibold">{{ t('prompts.form.content') }}: </h4>
+            <div class="whitespace-pre-wrap">{{ modal.prompt.value }}</div>
           </template>
           <!-- ELIMINAR -->
           <template v-else-if="modal.type === 'delete'">
@@ -163,7 +174,8 @@
             <p>{{ t('prompts.variablesInstruction') }}</p>
             <div v-for="(pr, i) in modal.params" :key="i" class="form-group">
               <label>{{ pr.name }}</label>
-              <input type="text" v-model="modal.params[i].value" class="form-control" />
+              <input type="text" v-model="modal.params[i].value" class="form-control" maxlength="150" />
+              <small>{{ modal.params[i].value?.length || 0 }}/150</small>
             </div>
           </template>
           <!-- CHAT -->
@@ -269,7 +281,7 @@ const cardActionGroups = [
   [
     { icon: (p: Prompt) => p.is_favorite ? 'bi bi-star-fill' : 'bi bi-star', handler: toggleFav },
     { icon: 'bi bi-clipboard', handler: copyPrompt },
-    { icon: 'bi bi-chat-dots', handler: usePrompt }
+    { icon: 'bi bi-play-circle', handler: usePrompt }
   ],
   [
     { icon: 'bi bi-pencil', handler: openForm },
@@ -562,22 +574,17 @@ watch(
   margin-top: 8px;
 }
 
-.new-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  position: relative;
-  top: 6px;
-  transition: transform 0.2s, box-shadow 0.2s;
+.tag-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 </style>
 

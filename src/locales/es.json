@@ -75,7 +75,13 @@
     "maxLengthExceeded": "El campo {field} no puede superar los {max} caracteres",
     "saveError": "Error al guardar",
     "deleteError": "Error al eliminar",
-    "loadError": "Error al cargar los datos"
+    "loadError": "Error al cargar los datos",
+    "invalidNumber":"Los valores numéricos deben ser mayores que cero.",
+    "copyText": "Copiar Texto",
+    "export": "Exportar",
+    "chooseOption": "Elige una opción",
+    "copyTextSuccess": "Texto copiado",
+    "exportSuccess": "Exportación completada"
   },
   "categories": {
     "title": "Categorías",
@@ -130,7 +136,7 @@
     },
     "card": {
       "favorite": "Favorito",
-      "useInChat": "Usar en chat",
+      "useInChat": "Veces usado",
       "copy": "Copiar"
     },
     "generator": {

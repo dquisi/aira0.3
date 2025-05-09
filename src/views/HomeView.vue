@@ -59,7 +59,7 @@ onMounted(async () => {
     try {
       await BaseApiService.getParamsFromUrl()
       userRole.value = BaseApiService.role || ''
-      hasPermissions.value = isAuthorized(['teacher', 'manager', 'student'])
+      hasPermissions.value = isAuthorized(['Docente', 'Administrador', 'Estudiante'])
     } catch (err) {
       hasPermissions.value = false
     }

@@ -14,9 +14,9 @@ export class BaseApiService {
     if (customId) return customId
     let apiIntegrationId = 1
     const role = this.role
-    if (role === 'teacher') {
+    if (role === 'Docente') {
       apiIntegrationId = 2
-    } else if (role === 'student') {
+    } else if (role === 'Estudiante') {
       apiIntegrationId = 4
     }
     return apiIntegrationId
@@ -32,14 +32,14 @@ export class BaseApiService {
       BaseApiService.initPromise = BaseApiService.getParamsFromUrl()
     }
   }
-
   static async getParamsFromUrl(): Promise<void> {
     const params = new URLSearchParams(window.location.search)
     BaseApiService.id = params.get('id') || ''
     const encryptedData = params.get('data') || ''
+    const date = new Intl.DateTimeFormat('sv',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).format(new Date()).replace(/-/g,'/').replace(' ','/');
     if (encryptedData) {
       try {
-        const decodedData = await this.verifyAndDecodeJwt(encryptedData, BaseApiService.id)
+        const decodedData = await this.verifyAndDecodeJwt(encryptedData,BaseApiService.id+date);
         BaseApiService.token = decodedData.token || ''
         BaseApiService.role = decodedData.role || ''
         BaseApiService.serviceUrl = decodedData.url || window.location.origin
@@ -53,6 +53,7 @@ export class BaseApiService {
     }
   }
 
+  
   static async verifyAndDecodeJwt(jwt: string, id: string): Promise<any> {
     const parts = jwt.split('.')
     if (parts.length !== 3) throw new Error('Formato de token inválido')

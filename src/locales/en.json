@@ -75,7 +75,13 @@
     "noData": "No data available",
     "saveError": "Error saving",
     "deleteError": "Error deleting",
-    "loadError": "Error loading data"
+    "loadError": "Error loading data",
+    "invalidNumber": "Numerical values must be greater than zero.",
+    "copyText": "Copy Text",
+    "export": "Export",
+    "chooseOption": "Choose an option",
+    "copyTextSuccess": "Copied text",
+    "exportSuccess": "Export completed"
   },
   "categories": {
     "title": "Categories",
