@@ -161,11 +161,12 @@
                     <div v-if="selectedFrequency === 'daily'" class="specific-option-group">
                       <div class="option-selector">
                         <div class="option-label">Cada día a las:</div>
-                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
-                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
-                            {{ (hour-1).toString().padStart(2, '0') }}:00
-                          </option>
-                        </select>
+                        <div class="time-picker-container">
+                          <div class="time-display" @click="showTimePickerModal = true">
+                            <span>{{ selectedHour.toString().padStart(2, '0') }}:{{ selectedMinute.toString().padStart(2, '0') }}</span>
+                            <i class="bi bi-clock"></i>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -173,19 +174,23 @@
                     <div v-if="selectedFrequency === 'weekly'" class="specific-option-group">
                       <div class="option-selector">
                         <div class="option-label">Día de la semana:</div>
-                        <select v-model="selectedDayOfWeek" class="day-selector" @change="updateCronExpression">
-                          <option v-for="(day, index) in weekDays" :key="index" :value="index">
-                            {{ day }}
-                          </option>
-                        </select>
+                        <div class="date-picker-container">
+                          <select v-model="selectedDayOfWeek" class="day-selector" @change="updateCronExpression">
+                            <option v-for="(day, index) in weekDays" :key="index" :value="index">
+                              {{ day }}
+                            </option>
+                          </select>
+                          <i class="bi bi-calendar-week"></i>
+                        </div>
                       </div>
                       <div class="option-selector">
                         <div class="option-label">A las:</div>
-                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
-                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
-                            {{ (hour-1).toString().padStart(2, '0') }}:00
-                          </option>
-                        </select>
+                        <div class="time-picker-container">
+                          <div class="time-display" @click="showTimePickerModal = true">
+                            <span>{{ selectedHour.toString().padStart(2, '0') }}:{{ selectedMinute.toString().padStart(2, '0') }}</span>
+                            <i class="bi bi-clock"></i>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -193,19 +198,23 @@
                     <div v-if="selectedFrequency === 'monthly'" class="specific-option-group">
                       <div class="option-selector">
                         <div class="option-label">Día del mes:</div>
-                        <select v-model="selectedDayOfMonth" class="day-selector" @change="updateCronExpression">
-                          <option v-for="day in 31" :key="day" :value="day">
-                            {{ day }}
-                          </option>
-                        </select>
+                        <div class="date-picker-container">
+                          <select v-model="selectedDayOfMonth" class="day-selector" @change="updateCronExpression">
+                            <option v-for="day in 31" :key="day" :value="day">
+                              {{ day }}
+                            </option>
+                          </select>
+                          <i class="bi bi-calendar-date"></i>
+                        </div>
                       </div>
                       <div class="option-selector">
                         <div class="option-label">A las:</div>
-                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
-                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
-                            {{ (hour-1).toString().padStart(2, '0') }}:00
-                          </option>
-                        </select>
+                        <div class="time-picker-container">
+                          <div class="time-display" @click="showTimePickerModal = true">
+                            <span>{{ selectedHour.toString().padStart(2, '0') }}:{{ selectedMinute.toString().padStart(2, '0') }}</span>
+                            <i class="bi bi-clock"></i>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -336,6 +345,59 @@
     <!-- CONFIRMACIÓN ELIMINAR -->
     <DeleteConfirmDialog :show="showDeleteConfirm" :item-name="currentEvent.name"
       :warning-message="t('common.deleteWarning')" @confirm="deleteEvent" @cancel="showDeleteConfirm = false" />
+    
+    <!-- SELECTOR DE TIEMPO MODAL -->
+    <div v-if="showTimePickerModal" class="modal-overlay" @click.self="showTimePickerModal = false">
+      <div class="time-picker-modal">
+        <div class="time-picker-header">
+          <h3>Seleccionar Hora</h3>
+          <button class="btn-icon" @click="showTimePickerModal = false">✖️</button>
+        </div>
+        <div class="time-picker-body">
+          <div class="time-picker-clock">
+            <div class="time-picker-section">
+              <div class="time-picker-label">Hora</div>
+              <div class="time-picker-wheel">
+                <button 
+                  v-for="hour in 24" 
+                  :key="hour-1" 
+                  :class="['time-picker-value', {'active': selectedHour === hour-1}]"
+                  @click="selectedHour = hour-1; updateCronExpression();"
+                >
+                  {{ (hour-1).toString().padStart(2, '0') }}
+                </button>
+              </div>
+            </div>
+            <div class="time-picker-section">
+              <div class="time-picker-label">Minutos</div>
+              <div class="time-picker-wheel">
+                <button 
+                  v-for="min in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]" 
+                  :key="min" 
+                  :class="['time-picker-value', {'active': selectedMinute === min}]"
+                  @click="selectedMinute = min; updateCronExpression();"
+                >
+                  {{ min.toString().padStart(2, '0') }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="time-picker-preview">
+            <div class="time-display-large">
+              {{ selectedHour.toString().padStart(2, '0') }}:{{ selectedMinute.toString().padStart(2, '0') }}
+            </div>
+          </div>
+        </div>
+        <div class="time-picker-footer">
+          <button class="btn-secondary" @click="showTimePickerModal = false">
+            Cancelar
+          </button>
+          <button class="btn-primary" @click="showTimePickerModal = false">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -365,9 +427,11 @@ const scheduleType = ref<'single' | 'recurring'>('single')
 const cronError = ref<string | null>(null)
 const selectedFrequency = ref('daily')
 const selectedHour = ref(9)
+const selectedMinute = ref(0)
 const selectedDayOfWeek = ref(1) // Lunes
 const selectedDayOfMonth = ref(1)
 const selectedHourInterval = ref('1')
+const showTimePickerModal = ref(false)
 const weekDays = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
 const frequencyOptions = [
@@ -401,19 +465,19 @@ function selectFrequency(frequency: string) {
 function updateCronExpression() {
   switch (selectedFrequency.value) {
     case 'daily':
-      currentEvent.value.cron = `0 ${selectedHour.value} * * *`
+      currentEvent.value.cron = `${selectedMinute.value} ${selectedHour.value} * * *`
       break
     case 'weekly':
-      currentEvent.value.cron = `0 ${selectedHour.value} * * ${selectedDayOfWeek.value}`
+      currentEvent.value.cron = `${selectedMinute.value} ${selectedHour.value} * * ${selectedDayOfWeek.value}`
       break
     case 'monthly':
-      currentEvent.value.cron = `0 ${selectedHour.value} ${selectedDayOfMonth.value} * *`
+      currentEvent.value.cron = `${selectedMinute.value} ${selectedHour.value} ${selectedDayOfMonth.value} * *`
       break
     case 'hourly':
       if (selectedHourInterval.value === '1') {
-        currentEvent.value.cron = `0 * * * *`
+        currentEvent.value.cron = `${selectedMinute.value} * * * *`
       } else {
-        currentEvent.value.cron = `0 */${selectedHourInterval.value} * * *`
+        currentEvent.value.cron = `${selectedMinute.value} */${selectedHourInterval.value} * * *`
       }
       break
   }
@@ -459,22 +523,36 @@ function formatCronDescription(cronExpression: string): string {
     if (parts.length === 5) {
       const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
       
-      if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
-        return `Diariamente a las ${hour}:00`
+      // Formato diario
+      if (minute.match(/^\d+$/) && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        const formattedHour = hour.padStart(2, '0');
+        const formattedMinute = minute.padStart(2, '0');
+        return `Diariamente a las ${formattedHour}:${formattedMinute}`;
       }
       
-      if (minute === '0' && hour === '*' && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
-        return `Cada hora en punto`
+      // Formato cada hora
+      if (minute.match(/^\d+$/) && hour === '*' && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        return `Cada hora en el minuto ${minute}`;
       }
       
-      if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek.match(/^\d+$/)) {
-        const day = weekDays[parseInt(dayOfWeek)]
-        return `Cada ${day} a las ${hour}:00`
+      // Formato semanal
+      if (minute.match(/^\d+$/) && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek.match(/^\d+$/)) {
+        const day = weekDays[parseInt(dayOfWeek)];
+        const formattedHour = hour.padStart(2, '0');
+        const formattedMinute = minute.padStart(2, '0');
+        return `Cada ${day} a las ${formattedHour}:${formattedMinute}`;
+      }
+      
+      // Formato mensual
+      if (minute.match(/^\d+$/) && hour.match(/^\d+$/) && dayOfMonth.match(/^\d+$/) && month === '*' && dayOfWeek === '*') {
+        const formattedHour = hour.padStart(2, '0');
+        const formattedMinute = minute.padStart(2, '0');
+        return `El día ${dayOfMonth} de cada mes a las ${formattedHour}:${formattedMinute}`;
       }
     }
   }
   
-  return map[cronExpression] || cronExpression
+  return map[cronExpression] || cronExpression;
 }
 
 // Opciones

@@ -1551,6 +1551,172 @@ button {
   position: relative;
 }
 
+/* Estilos para el selector de fecha */
+.date-picker-container {
+  position: relative;
+  width: 120px;
+}
+
+.date-picker-container select {
+  width: 100%;
+  padding-right: 30px;
+  appearance: none;
+  background-color: var(--card-background);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.date-picker-container i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  pointer-events: none;
+}
+
+/* Estilos para el selector de tiempo */
+.time-picker-container {
+  position: relative;
+  width: 120px;
+}
+
+.time-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: var(--card-background);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.time-display:hover {
+  background-color: rgba(0, 128, 192, 0.1);
+}
+
+.time-display i {
+  color: var(--primary-color);
+}
+
+/* Estilos para el modal de selector de tiempo */
+.time-picker-modal {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 360px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.time-picker-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.time-picker-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.time-picker-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.time-picker-clock {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.time-picker-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.time-picker-label {
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.time-picker-wheel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 230px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background-color: var(--secondary-background);
+  padding: 5px;
+}
+
+.time-picker-value {
+  background: none;
+  border: none;
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  color: var(--text-color);
+}
+
+.time-picker-value:hover {
+  background-color: rgba(0, 128, 192, 0.1);
+}
+
+.time-picker-value.active {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.time-picker-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.time-display-large {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: rgba(0, 128, 192, 0.1);
+}
+
+.time-picker-footer {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--card-border);
+}
+
 /* Estilos para el dropdown del selector */
 :deep(.v-popper--theme-dropdown) {
   max-height: 200px;
