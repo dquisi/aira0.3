@@ -138,22 +138,111 @@
             <div v-else class="schedule-content">
               <!-- Interfaz de cron mejorada -->
               <div class="schedule-row">
-                <label>{{ t('events.cronExpression') }}:</label>
-                <div class="inline-cron-container">
-                  <div class="cron-horizontal-layout">
-                    <!-- Contenedor con scrollbar horizontal en vez de expandirse verticalmente -->
-                    <cron-light 
-                      v-model="currentEvent.cron" 
-                      @error="cronError = $event" 
-                      :locale="locale" 
-                      class="custom-cron-horizontal"
-                      :custom-class="{
-                        'cron-period-label': true,
-                        'cron-period-container': true,
-                        'cron-period-select': true
-                      }"
-                    />
-                    <!-- Indicador de ayuda visual para desplazamiento horizontal -->
+                <label>{{ t('events.schedule') }}:</label>
+                <div class="friendly-schedule-selector">
+                  <!-- Selector de frecuencia principal -->
+                  <div class="schedule-option-group">
+                    <div class="schedule-selector-label">Frecuencia:</div>
+                    <div class="frequency-options">
+                      <button 
+                        v-for="option in frequencyOptions" 
+                        :key="option.value" 
+                        class="frequency-option-btn" 
+                        :class="{ active: selectedFrequency === option.value }"
+                        @click="selectFrequency(option.value)">
+                        <i :class="option.icon"></i> {{ option.label }}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Opciones específicas según la frecuencia seleccionada -->
+                  <div class="specific-options">
+                    <!-- Diario -->
+                    <div v-if="selectedFrequency === 'daily'" class="specific-option-group">
+                      <div class="option-selector">
+                        <div class="option-label">Cada día a las:</div>
+                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
+                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
+                            {{ (hour-1).toString().padStart(2, '0') }}:00
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- Semanal -->
+                    <div v-if="selectedFrequency === 'weekly'" class="specific-option-group">
+                      <div class="option-selector">
+                        <div class="option-label">Día de la semana:</div>
+                        <select v-model="selectedDayOfWeek" class="day-selector" @change="updateCronExpression">
+                          <option v-for="(day, index) in weekDays" :key="index" :value="index">
+                            {{ day }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="option-selector">
+                        <div class="option-label">A las:</div>
+                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
+                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
+                            {{ (hour-1).toString().padStart(2, '0') }}:00
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- Mensual -->
+                    <div v-if="selectedFrequency === 'monthly'" class="specific-option-group">
+                      <div class="option-selector">
+                        <div class="option-label">Día del mes:</div>
+                        <select v-model="selectedDayOfMonth" class="day-selector" @change="updateCronExpression">
+                          <option v-for="day in 31" :key="day" :value="day">
+                            {{ day }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="option-selector">
+                        <div class="option-label">A las:</div>
+                        <select v-model="selectedHour" class="time-selector" @change="updateCronExpression">
+                          <option v-for="hour in 24" :key="hour-1" :value="hour-1">
+                            {{ (hour-1).toString().padStart(2, '0') }}:00
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- Por hora -->
+                    <div v-if="selectedFrequency === 'hourly'" class="specific-option-group">
+                      <div class="option-selector">
+                        <div class="option-label">Cada:</div>
+                        <select v-model="selectedHourInterval" class="interval-selector" @change="updateCronExpression">
+                          <option value="1">1 hora</option>
+                          <option value="2">2 horas</option>
+                          <option value="3">3 horas</option>
+                          <option value="4">4 horas</option>
+                          <option value="6">6 horas</option>
+                          <option value="12">12 horas</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- Personalizado -->
+                    <div v-if="selectedFrequency === 'custom'" class="specific-option-group">
+                      <div class="custom-cron-input">
+                        <div class="option-label">Expresión Cron:</div>
+                        <input 
+                          v-model="currentEvent.cron" 
+                          type="text" 
+                          class="form-control"
+                          placeholder="0 12 * * *"
+                        />
+                        <div class="cron-hint">Formato: minuto hora día-mes mes día-semana</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Previsualización de la expresión -->
+                  <div class="cron-preview">
+                    <div class="cron-preview-label">Programado para:</div>
+                    <div class="cron-preview-value">{{ formatCronDescription(currentEvent.cron) }}</div>
                     <div v-if="cronError" class="cron-error">
                       <i class="bi bi-exclamation-triangle"></i> {{ cronError }}
                     </div>
@@ -163,18 +252,30 @@
               
               <div class="schedule-row quick-schedule inline-schedule">
                 <label>{{ t('common.quickOptions') }}:</label>
-                <div class="quick-options inline-quick-options">
-                  <button class="quick-option-btn" @click="currentEvent.cron = '0 0 * * *'">
-                    {{ t('events.everyDay') }}
+                <div class="quick-options-grid">
+                  <button class="quick-option-tile" @click="setQuickOption('0 0 * * *')">
+                    <i class="bi bi-calendar-day"></i>
+                    <span>{{ t('events.everyDay') }}</span>
                   </button>
-                  <button class="quick-option-btn" @click="currentEvent.cron = '0 * * * *'">
-                    {{ t('events.everyHour') }}
+                  <button class="quick-option-tile" @click="setQuickOption('0 * * * *')">
+                    <i class="bi bi-clock"></i>
+                    <span>{{ t('events.everyHour') }}</span>
                   </button>
-                  <button class="quick-option-btn" @click="currentEvent.cron = '0 12 * * *'">
-                    {{ t('events.everyNoon') }}
+                  <button class="quick-option-tile" @click="setQuickOption('0 12 * * *')">
+                    <i class="bi bi-sun"></i>
+                    <span>{{ t('events.everyNoon') }}</span>
                   </button>
-                  <button class="quick-option-btn" @click="currentEvent.cron = '0 0 * * 1'">
-                    {{ t('events.everyWeek') }}
+                  <button class="quick-option-tile" @click="setQuickOption('0 0 * * 1')">
+                    <i class="bi bi-calendar-week"></i>
+                    <span>{{ t('events.everyWeek') }}</span>
+                  </button>
+                  <button class="quick-option-tile" @click="setQuickOption('0 9 * * 1-5')">
+                    <i class="bi bi-briefcase"></i>
+                    <span>{{ t('events.workingHours') }}</span>
+                  </button>
+                  <button class="quick-option-tile" @click="setQuickOption('0 8,17 * * *')">
+                    <i class="bi bi-alarm"></i>
+                    <span>{{ t('events.twiceDaily') }}</span>
                   </button>
                 </div>
               </div>
@@ -262,6 +363,20 @@ const searchQuery = ref('')
 const activeFilter = ref<'all' | 'active' | 'inactive'>('all')
 const scheduleType = ref<'single' | 'recurring'>('single')
 const cronError = ref<string | null>(null)
+const selectedFrequency = ref('daily')
+const selectedHour = ref(9)
+const selectedDayOfWeek = ref(1) // Lunes
+const selectedDayOfMonth = ref(1)
+const selectedHourInterval = ref('1')
+const weekDays = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+
+const frequencyOptions = [
+  { value: 'daily', label: 'Diario', icon: 'bi bi-calendar-day' },
+  { value: 'weekly', label: 'Semanal', icon: 'bi bi-calendar-week' },
+  { value: 'monthly', label: 'Mensual', icon: 'bi bi-calendar-month' },
+  { value: 'hourly', label: 'Por hora', icon: 'bi bi-clock' },
+  { value: 'custom', label: 'Personalizado', icon: 'bi bi-sliders' }
+]
 
 const currentEvent = ref<Partial<Event>>({
   id: null,
@@ -277,6 +392,90 @@ const currentEvent = ref<Partial<Event>>({
   active: true,
   inputs: {}
 })
+
+function selectFrequency(frequency: string) {
+  selectedFrequency.value = frequency
+  updateCronExpression()
+}
+
+function updateCronExpression() {
+  switch (selectedFrequency.value) {
+    case 'daily':
+      currentEvent.value.cron = `0 ${selectedHour.value} * * *`
+      break
+    case 'weekly':
+      currentEvent.value.cron = `0 ${selectedHour.value} * * ${selectedDayOfWeek.value}`
+      break
+    case 'monthly':
+      currentEvent.value.cron = `0 ${selectedHour.value} ${selectedDayOfMonth.value} * *`
+      break
+    case 'hourly':
+      if (selectedHourInterval.value === '1') {
+        currentEvent.value.cron = `0 * * * *`
+      } else {
+        currentEvent.value.cron = `0 */${selectedHourInterval.value} * * *`
+      }
+      break
+  }
+}
+
+function setQuickOption(cronExpression: string) {
+  currentEvent.value.cron = cronExpression
+  
+  // Actualizar el selector de frecuencia basado en la expresión cron seleccionada
+  if (cronExpression === '0 0 * * *') {
+    selectedFrequency.value = 'daily'
+    selectedHour.value = 0
+  } else if (cronExpression === '0 * * * *') {
+    selectedFrequency.value = 'hourly'
+    selectedHourInterval.value = '1'
+  } else if (cronExpression === '0 12 * * *') {
+    selectedFrequency.value = 'daily'
+    selectedHour.value = 12
+  } else if (cronExpression === '0 0 * * 1') {
+    selectedFrequency.value = 'weekly'
+    selectedDayOfWeek.value = 1
+    selectedHour.value = 0
+  } else if (cronExpression === '0 9 * * 1-5') {
+    selectedFrequency.value = 'custom'
+  } else if (cronExpression === '0 8,17 * * *') {
+    selectedFrequency.value = 'custom'
+  }
+}
+
+function formatCronDescription(cronExpression: string): string {
+  const map: Record<string, string> = {
+    '0 0 * * *': t('events.everyDay') + ' a medianoche',
+    '0 * * * *': t('events.everyHour'),
+    '0 12 * * *': t('events.everyNoon'),
+    '0 0 * * 1': t('events.everyWeek') + ' (Lunes)',
+    '0 9 * * 1-5': t('events.workingHours') + ' (9:00)',
+    '0 8,17 * * *': t('events.twiceDaily') + ' (8:00 y 17:00)'
+  }
+  
+  // Si no está en el mapa, generar una descripción personalizada
+  if (!map[cronExpression]) {
+    const parts = cronExpression.split(' ')
+    if (parts.length === 5) {
+      const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
+      
+      if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        return `Diariamente a las ${hour}:00`
+      }
+      
+      if (minute === '0' && hour === '*' && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        return `Cada hora en punto`
+      }
+      
+      if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek.match(/^\d+$/)) {
+        const day = weekDays[parseInt(dayOfWeek)]
+        return `Cada ${day} a las ${hour}:00`
+      }
+    }
+  }
+  
+  return map[cronExpression] || cronExpression
+}
 
 // Opciones
 const filterOptions = computed(() => [
@@ -512,6 +711,50 @@ function editEvent(e: Event) {
       : ''
   }
   scheduleType.value = e.cron ? 'recurring' : 'single'
+  
+  // Configurar los selectores basados en la expresión cron existente
+  if (e.cron) {
+    // Analizar la expresión cron para establecer los valores de los selectores
+    const parts = e.cron.split(' ')
+    if (parts.length === 5) {
+      const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
+      
+      // Expresiones diarias (0 X * * *)
+      if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        selectedFrequency.value = 'daily'
+        selectedHour.value = parseInt(hour)
+      } 
+      // Expresiones semanales (0 X * * Y)
+      else if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek.match(/^\d+$/)) {
+        selectedFrequency.value = 'weekly'
+        selectedHour.value = parseInt(hour)
+        selectedDayOfWeek.value = parseInt(dayOfWeek)
+      }
+      // Expresiones mensuales (0 X Y * *)
+      else if (minute === '0' && hour.match(/^\d+$/) && dayOfMonth.match(/^\d+$/) && month === '*' && dayOfWeek === '*') {
+        selectedFrequency.value = 'monthly'
+        selectedHour.value = parseInt(hour)
+        selectedDayOfMonth.value = parseInt(dayOfMonth)
+      }
+      // Expresiones horarias (0 * * * *)
+      else if (minute === '0' && hour === '*' && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        selectedFrequency.value = 'hourly'
+        selectedHourInterval.value = '1'
+      }
+      // Intervalo de horas (0 */X * * *)
+      else if (minute === '0' && hour.startsWith('*/') && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        selectedFrequency.value = 'hourly'
+        selectedHourInterval.value = hour.substring(2)
+      }
+      // Si no coincide con ningún patrón, usar el modo personalizado
+      else {
+        selectedFrequency.value = 'custom'
+      }
+    } else {
+      selectedFrequency.value = 'custom'
+    }
+  }
+  
   editMode.value = true
   onPromptChange()
   showModal.value = true
