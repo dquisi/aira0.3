@@ -81,11 +81,7 @@
             <input v-model="currentEvent.name" type="text" class="form-control" maxlength="50" required />
             <small v-if="currentEvent.name">{{ currentEvent.name.length || 0 }}/50</small>
           </div>
-          <div class="form-group">
-            <label>{{ t('common.description') }}</label>
-            <textarea v-model="currentEvent.description" class="form-control" maxlength="250" rows="3"></textarea>
-            <small v-if="currentEvent.description">{{ currentEvent.description.length || 0 }}/250</small>
-          </div>
+          <!-- Campo de descripción eliminado -->
           <div class="form-group">
             <label>{{ t('events.prompt') }} *</label>
             <v-select v-model="currentEvent.prompt_id" :options="promptOptions" :reduce="o => o.id"
@@ -127,8 +123,8 @@
                   <i class="bi bi-calendar"></i>
                   <input 
                     v-model="currentEvent.next_execution" 
-                    type="datetime-local" 
-                    class="form-control datetime-picker" 
+                    type="date" 
+                    class="form-control date-picker" 
                     required 
                   />
                 </div>
@@ -295,8 +291,8 @@
                   <i class="bi bi-calendar-x"></i>
                   <input 
                     v-model="currentEvent.end_date" 
-                    type="datetime-local" 
-                    class="form-control datetime-picker"
+                    type="date" 
+                    class="form-control date-picker"
                   />
                 </div>
               </div>
@@ -634,8 +630,8 @@ const viewFields = computed(() => [
       Object.entries(inp)
         .map(([k, v]) => `${k}: ${v}`)
         .join(', ')
-  },
-  { key: 'description', label: t('events.description') }
+  }
+  // Campo de descripción eliminado
 ])
 
 // Filtrado
@@ -710,14 +706,15 @@ async function loadData() {
 }
 
 function openAddModal() {
+  // Obtener fecha actual en formato YYYY-MM-DD
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+  
   currentEvent.value = {
     id: null,
     name: '',
-    description: '',
     prompt_id: null,
-    next_execution: new Date(Date.now() + 3600000)
-      .toISOString()
-      .slice(0, 16),
+    next_execution: formattedDate,
     cron: '0 0 * * *',
     end_date: '',
     status: 'pending',
@@ -782,10 +779,10 @@ function editEvent(e: Event) {
   currentEvent.value = {
     ...e,
     next_execution: e.next_execution
-      ? new Date(e.next_execution).toISOString().slice(0, 16)
+      ? new Date(e.next_execution).toISOString().split('T')[0]
       : '',
     end_date: e.end_date
-      ? new Date(e.end_date).toISOString().slice(0, 16)
+      ? new Date(e.end_date).toISOString().split('T')[0]
       : ''
   }
   scheduleType.value = e.cron ? 'recurring' : 'single'
