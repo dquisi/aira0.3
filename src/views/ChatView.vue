@@ -654,12 +654,11 @@ const newChat = async () => {
   }]
   await scrollToBottom()
 }
-  const handleEnter = () => {
-    if (isLoading.value) return
-    sendMessage()
-  }
-
-  
+const handleEnter = () => {
+  // si está cargando, no hace nada
+  if (isLoading.value) return
+  sendMessage()
+}
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown)
 })
@@ -696,6 +695,18 @@ const isImageType = (file: any) => {
     (file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) ||
     file.isGraphic === true
   )
+}
+
+const handleMarkdownImageClick = (event: MouseEvent) => {
+  const target = event.target as HTMLImageElement
+  if (target && target.tagName === 'IMG') {
+    currentImage.value = {
+      url: target.src,
+      name: target.alt || 'imagen',
+      type: 'image'
+    }
+    showImageModal.value = true
+  }
 }
 
 const getFilePreviewUrl = (file: any) => {

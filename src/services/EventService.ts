@@ -1,7 +1,6 @@
 import { BaseApiService } from './BaseApiService'
 import { handleError } from '@/utils/notifications'
 import type { Event } from '@/types'
-import { isConstructorDeclaration } from 'typescript'
 
 class EventService extends BaseApiService {
   private static instance: EventService

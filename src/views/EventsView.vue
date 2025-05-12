@@ -90,7 +90,7 @@
           <div v-if="promptInputs.length" class="form-group prompt-inputs">
             <h4>{{ t('events.promptParameters') }}</h4>
             <div v-for="param in promptInputs" :key="param.name" class="input-parameter">
-              <label>{{ param.name }}</label>
+              <label>{{ param.name }} : </label>
               <input v-model="currentEvent.inputs[param.name]" type="text" class="form-control"
                 :placeholder="t('events.enterValue', { param: param.name })" />
             </div>
@@ -410,7 +410,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import vSelect from 'vue-select'
-import { CronLight } from '@vue-js-cron/light'
 import { eventService } from '@/services/EventService'
 import { promptService } from '@/services/PromptService'
 import { showNotification, handleError } from '@/utils/notifications'
