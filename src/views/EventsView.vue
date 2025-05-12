@@ -519,6 +519,13 @@ function formatCronDescription(cronExpression: string): string {
     if (parts.length === 5) {
       const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
       
+      // Formato con intervalo de horas (*/X)
+      if (minute.match(/^\d+$/) && hour.startsWith('*/') && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+        const interval = hour.substring(2);
+        const formattedMinute = minute.padStart(2, '0');
+        return `Cada ${interval} horas en el minuto ${formattedMinute}`;
+      }
+      
       // Formato diario
       if (minute.match(/^\d+$/) && hour.match(/^\d+$/) && dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
         const formattedHour = hour.padStart(2, '0');
