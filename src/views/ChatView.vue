@@ -1,3 +1,7 @@
+The code changes involve fixing a duplicated style declaration and adding an event listener for images within markdown content in the ChatView.vue component.
+```
+
+```vue
 <template>
   <div class="chat-with-sidebar">
     <!-- Contenido principal del chat -->
@@ -287,6 +291,11 @@ const renderMarkdown = (text: string) => {
       /<a\s+href="([^"]+)"(.*?)>/g,
       '<a href="$1"$2 target="_blank" rel="noopener noreferrer">'
     );
+
+    // Make images clickable within the rendered markdown
+    rendered = rendered.replace(/<img(.*?)src="(.*?)"(.*?)>/g, (match, p1, p2, p3) => {
+      return `<a href="#" data-src="${p2}" class="markdown-image-link"><img${p1}src="${p2}"${p3}></a>`;
+    });
 
     return rendered;
   } catch (error) {
@@ -661,10 +670,13 @@ const handleEnter = () => {
 }
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown)
+  // Attach event listener after component is mounted
+  document.addEventListener('click', handleMarkdownImageClick);
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown)
+  document.removeEventListener('click', handleMarkdownImageClick);
 })
 
 const props = defineProps({
@@ -698,14 +710,18 @@ const isImageType = (file: any) => {
 }
 
 const handleMarkdownImageClick = (event: MouseEvent) => {
-  const target = event.target as HTMLImageElement
-  if (target && target.tagName === 'IMG') {
-    currentImage.value = {
-      url: target.src,
-      name: target.alt || 'imagen',
-      type: 'image'
+  const target = event.target as HTMLAnchorElement;
+  if (target && target.classList.contains('markdown-image-link')) {
+    event.preventDefault();
+    const img = target.querySelector('img');
+    if (img) {
+      currentImage.value = {
+        url: img.src,
+        name: img.alt || 'imagen',
+        type: 'image'
+      };
+      showImageModal.value = true;
     }
-    showImageModal.value = true
   }
 }
 
@@ -805,3 +821,4 @@ const usePrompt = async (prompt: Prompt) => {
   }
 }
 </style>
+</replit_final_file>

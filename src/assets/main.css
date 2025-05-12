@@ -997,6 +997,29 @@ button {
   --input-height: 60px
 }
 
+
+.markdown-image.clickable {
+  max-width: 100%;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.markdown-image.clickable:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.markdown-content img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.no-zoom {
+  pointer-events: none;
+}
+
 @keyframes slideInFromLeft {
   from {
     transform: translateX(-100%)
