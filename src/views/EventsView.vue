@@ -121,7 +121,7 @@
             </div>
             
             <div v-if="scheduleType === 'single'" class="schedule-content">
-              <div class="schedule-row">
+              <div class="schedule-row inline-schedule">
                 <label>{{ t('events.executionDate') }}:</label>
                 <div class="schedule-input-with-icon">
                   <i class="bi bi-calendar"></i>
@@ -136,21 +136,24 @@
             </div>
             
             <div v-else class="schedule-content">
+              <!-- Interfaz de cron mejorada -->
               <div class="schedule-row">
                 <label>{{ t('events.cronExpression') }}:</label>
-                <div class="cron-container">
-                  <cron-light 
-                    v-model="currentEvent.cron" 
-                    @error="cronError = $event" 
-                    :locale="locale" 
-                    class="custom-cron"
-                  />
+                <div class="inline-cron-container">
+                  <div class="cron-horizontal-layout">
+                    <cron-light 
+                      v-model="currentEvent.cron" 
+                      @error="cronError = $event" 
+                      :locale="locale" 
+                      class="custom-cron-horizontal"
+                    />
+                  </div>
                 </div>
               </div>
               
-              <div class="schedule-row quick-schedule">
+              <div class="schedule-row quick-schedule inline-schedule">
                 <label>{{ t('common.quickOptions') }}:</label>
-                <div class="quick-options">
+                <div class="quick-options inline-quick-options">
                   <button class="quick-option-btn" @click="currentEvent.cron = '0 0 * * *'">
                     {{ t('events.everyDay') }}
                   </button>
@@ -166,7 +169,7 @@
                 </div>
               </div>
               
-              <div class="schedule-row">
+              <div class="schedule-row inline-schedule">
                 <label>{{ t('events.endDate') }}:</label>
                 <div class="schedule-input-with-icon">
                   <i class="bi bi-calendar-x"></i>

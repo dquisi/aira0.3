@@ -1255,6 +1255,98 @@ button {
   border-color: var(--primary-color);
 }
 
+/* Estilos para la interfaz de programación horizontal */
+.inline-schedule {
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+.inline-schedule label {
+  min-width: 150px;
+  white-space: nowrap;
+}
+
+.inline-schedule .schedule-input-with-icon,
+.inline-cron-container {
+  flex: 1;
+  display: flex;
+}
+
+.cron-horizontal-layout {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-cron-horizontal {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+
+.custom-cron-horizontal select,
+.custom-cron-horizontal input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--input-border);
+  background-color: var(--card-background);
+  min-width: auto;
+  width: auto;
+}
+
+.custom-cron-horizontal .cron-period-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.inline-quick-options {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+/* Para el scrollbar horizontal en el selector de cron */
+.cron-horizontal-layout::-webkit-scrollbar,
+.inline-quick-options::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cron-horizontal-layout::-webkit-scrollbar-thumb,
+.inline-quick-options::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+.cron-horizontal-layout::-webkit-scrollbar-track,
+.inline-quick-options::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+/* Ajustes para la librería vue-js-cron */
+:deep(.cron-editor) {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+:deep(.cron-period) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
 .copy-btn {
   background: none;
   border: none;
