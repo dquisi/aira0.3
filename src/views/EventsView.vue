@@ -141,12 +141,22 @@
                 <label>{{ t('events.cronExpression') }}:</label>
                 <div class="inline-cron-container">
                   <div class="cron-horizontal-layout">
+                    <!-- Contenedor con scrollbar horizontal en vez de expandirse verticalmente -->
                     <cron-light 
                       v-model="currentEvent.cron" 
                       @error="cronError = $event" 
                       :locale="locale" 
                       class="custom-cron-horizontal"
+                      :custom-class="{
+                        'cron-period-label': true,
+                        'cron-period-container': true,
+                        'cron-period-select': true
+                      }"
                     />
+                    <!-- Indicador de ayuda visual para desplazamiento horizontal -->
+                    <div v-if="cronError" class="cron-error">
+                      <i class="bi bi-exclamation-triangle"></i> {{ cronError }}
+                    </div>
                   </div>
                 </div>
               </div>

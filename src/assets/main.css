@@ -1287,16 +1287,37 @@ button {
   gap: 1rem;
   padding: 0.5rem;
   white-space: nowrap;
+  overflow-x: auto;
 }
 
 .custom-cron-horizontal select,
 .custom-cron-horizontal input {
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 4px;
-  border: 1px solid var(--input-border);
+  border: 1px solid var(--primary-color);
   background-color: var(--card-background);
   min-width: auto;
   width: auto;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230080c0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  padding-right: 2rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.custom-cron-horizontal select:hover,
+.custom-cron-horizontal input:hover {
+  box-shadow: 0 0 0 2px rgba(0, 128, 192, 0.2);
+}
+
+.custom-cron-horizontal select:focus,
+.custom-cron-horizontal input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 128, 192, 0.3);
 }
 
 .custom-cron-horizontal .cron-period-container {
@@ -1305,6 +1326,17 @@ button {
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  background-color: rgba(0, 128, 192, 0.05);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 128, 192, 0.1);
+}
+
+/* Estilo para las etiquetas de variables */
+.cron-period-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.9rem;
 }
 
 .inline-quick-options {
@@ -1316,19 +1348,74 @@ button {
 
 /* Para el scrollbar horizontal en el selector de cron */
 .cron-horizontal-layout::-webkit-scrollbar,
-.inline-quick-options::-webkit-scrollbar {
+.inline-quick-options::-webkit-scrollbar,
+.custom-cron-horizontal::-webkit-scrollbar {
   height: 6px;
 }
 
 .cron-horizontal-layout::-webkit-scrollbar-thumb,
-.inline-quick-options::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
+.inline-quick-options::-webkit-scrollbar-thumb,
+.custom-cron-horizontal::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
   border-radius: 3px;
 }
 
 .cron-horizontal-layout::-webkit-scrollbar-track,
-.inline-quick-options::-webkit-scrollbar-track {
+.inline-quick-options::-webkit-scrollbar-track,
+.custom-cron-horizontal::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
+}
+
+/* Indicadores para selección de variables */
+.cron-error {
+  color: var(--danger-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Contenedor fijo para evitar cambios de tamaño cuando se seleccionan opciones */
+.inline-cron-container {
+  height: auto;
+  min-height: 60px;
+  position: relative;
+}
+
+/* Estilos para el dropdown del selector */
+:deep(.v-popper--theme-dropdown) {
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background-color: var(--card-background);
+}
+
+:deep(.v-popper__inner) {
+  padding: 0.5rem 0;
+}
+
+/* Asegurar que los selectores permanezcan en línea */
+:deep(.cron-editor) {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  padding-bottom: 0.5rem !important;
+  gap: 0.5rem !important;
+  max-height: none !important;
+}
+
+:deep(.cron-period) {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+  min-height: 40px !important;
 }
 
 /* Ajustes para la librería vue-js-cron */
