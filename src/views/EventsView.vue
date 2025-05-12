@@ -122,11 +122,20 @@
                 <div class="schedule-input-with-icon">
                   <i class="bi bi-calendar"></i>
                   <input 
-                    v-model="currentEvent.next_execution" 
+                    v-model="currentEvent.next_execution_date" 
                     type="date" 
                     class="form-control date-picker" 
                     required 
                   />
+                </div>
+              </div>
+              <div class="schedule-row inline-schedule">
+                <label>Hora de ejecución:</label>
+                <div class="time-picker-container">
+                  <div class="time-display" @click="showTimePickerModal = true">
+                    <span>{{ selectedHour.toString().padStart(2, '0') }}:{{ selectedMinute.toString().padStart(2, '0') }}</span>
+                    <i class="bi bi-clock"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -717,11 +726,15 @@ function openAddModal() {
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
   
+  // Establecer hora actual
+  selectedHour.value = today.getHours();
+  selectedMinute.value = today.getMinutes();
+  
   currentEvent.value = {
     id: null,
     name: '',
     prompt_id: null,
-    next_execution: formattedDate,
+    next_execution_date: formattedDate, // Usamos next_execution_date para el campo de fecha
     cron: '0 0 * * *',
     end_date: '',
     status: 'pending',
@@ -762,8 +775,16 @@ async function saveEvent() {
     }
 
     if (scheduleType.value === 'single') {
+      // Combinar fecha y hora para ejecución única
+      if (currentEvent.value.next_execution_date) {
+        const formattedHour = selectedHour.value.toString().padStart(2, '0');
+        const formattedMinute = selectedMinute.value.toString().padStart(2, '0');
+        const dateString = `${currentEvent.value.next_execution_date}T${formattedHour}:${formattedMinute}:00`;
+        currentEvent.value.next_execution = dateString;
+      }
       currentEvent.value.cron = ""
       delete currentEvent.value.end_date
+      delete currentEvent.value.next_execution_date // Eliminar propiedad temporal
     } else {
       delete currentEvent.value.next_execution
     }
@@ -785,13 +806,19 @@ async function saveEvent() {
 function editEvent(e: Event) {
   currentEvent.value = {
     ...e,
-    next_execution: e.next_execution
-      ? new Date(e.next_execution).toISOString().split('T')[0]
-      : '',
     end_date: e.end_date
       ? new Date(e.end_date).toISOString().split('T')[0]
       : ''
   }
+  
+  // Manejar fecha y hora por separado para ejecución única
+  if (e.next_execution) {
+    const nextExecDate = new Date(e.next_execution);
+    currentEvent.value.next_execution_date = nextExecDate.toISOString().split('T')[0];
+    selectedHour.value = nextExecDate.getHours();
+    selectedMinute.value = nextExecDate.getMinutes();
+  }
+  
   scheduleType.value = e.cron ? 'recurring' : 'single'
   
   // Configurar los selectores basados en la expresión cron existente
