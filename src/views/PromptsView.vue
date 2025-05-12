@@ -67,7 +67,7 @@
             </button>
           </div>
           <div>
-            <button v-for="(act, i) in cardActionGroups[1]" :key="i" class="btn-icon" @click="act.handler(p)">
+            <button v-for="(act, i) in cardActionGroups[1]" :key="i" class="btn-icon" @click.stop="act.handler(p)">
               <i :class="act.icon"></i>
             </button>
           </div>
@@ -88,7 +88,8 @@
           </h2>
           <div class="flex items-center gap-x-2">
             <template v-if="modal.type === 'view'">
-              <button @click="usePrompt(modal.prompt)" :title="t('common.execute', 'Ejecutar')">
+              <button :style="{ backgroundColor: 'green', color: 'white' }" @click="usePrompt(modal.prompt)"
+                :title="t('common.execute', 'Ejecutar')">
                 <i class="bi bi-play mr-1"></i>
                 <span>{{ t('common.execute', 'Ejecutar') }}</span>
               </button>

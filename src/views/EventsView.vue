@@ -82,7 +82,7 @@
             <small v-if="currentEvent.name">{{ currentEvent.name.length || 0 }}/50</small>
           </div>
           <div class="form-group">
-            <label>{{ t('events.description') }}</label>
+            <label>{{ t('common.description') }}</label>
             <textarea v-model="currentEvent.description" class="form-control" maxlength="250" rows="3"></textarea>
             <small v-if="currentEvent.description">{{ currentEvent.description.length || 0 }}/250</small>
           </div>

@@ -136,7 +136,7 @@
             <i :class="isRecording ? 'bi bi-stop-fill' : 'bi bi-mic'"></i>
           </button>
           <textarea v-model="inputMessage" class="message-input" :placeholder="$t('chats.input.placeholder')"
-            @keydown.enter.exact.prevent="sendMessage()"
+            @keydown.enter.exact.prevent="handleEnter"
             :disabled="audioState.status === 'playing' || isAudioProcessing"></textarea>
           <button class="btn-icon" @click="sendMessage($t('chats.help'))" :disabled="isLoading" title="Ayuda">
             <i class="bi bi-question-circle"></i>
@@ -215,7 +215,6 @@
 
 <script setup lang="tsx">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { marked } from 'marked'
 import 'highlight.js/styles/github.css'
 import ChatService from '@/services/ChatService'
 import promptService from '@/services/PromptService'
@@ -237,6 +236,7 @@ const currentImage = ref<any>(null)
 const isImageZoomed = ref(false)
 const apiIntegrationId = ref(null)
 const isRecording = ref(false)
+import { marked } from 'marked';
 const lastMessage = ref('')
 const rolePrompts = ref<Prompt[]>([])
 const showRolePrompts = ref(false)
@@ -274,7 +274,7 @@ const renderMarkdown = (text: string) => {
       }
     });
 
-    let rendered = marked(text);
+    let rendered = marked(text)
 
     // Añadir clases para mejorar estilos
     rendered = rendered
@@ -381,6 +381,7 @@ const sendMessage = async (msgText?: string) => {
       currentConversationId.value
     );
     lastMessage.value = responseLastMessage || '';
+    isLoading.value = false;
     if (conversationId && !currentConversationId.value) {
       currentConversationId.value = conversationId;
       const userMessageIndex = messages.value.findIndex(m =>
@@ -391,7 +392,10 @@ const sendMessage = async (msgText?: string) => {
       }
     }
     if (messageId) {
-      suggestions.value = await chatService.getSuggestedQuestions(messageId, apiIntegrationId.value);
+      suggestions.value = await chatService.getSuggestedQuestions(
+        messageId,
+        apiIntegrationId.value
+      );
     }
   } catch (error) {
     let errorMessage = 'Lo siento, ocurrió un error al procesar tu mensaje. Por favor intenta de nuevo.';
@@ -402,7 +406,6 @@ const sendMessage = async (msgText?: string) => {
       time: new Date().toISOString()
     });
   } finally {
-    isLoading.value = false;
     unsubscribe();
     await scrollToBottom();
   }
@@ -500,50 +503,34 @@ const getFileIconClass = (attachment) => {
     return 'bi bi-file-earmark'
   }
 }
-const mediaRecorder = ref<MediaRecorder | null>(null)
-const audioChunks = ref<Blob[]>([])
 
-const toggleRecording = async () => {
+
+const toggleRecording = () => {
   if (isRecording.value) {
+    chatService.stopRecording()
     isRecording.value = false
-    if (mediaRecorder.value) {
-      mediaRecorder.value.stop()
-    }
   } else {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      audioChunks.value = []
-      mediaRecorder.value = new MediaRecorder(stream)
-      mediaRecorder.value.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.value.push(event.data)
-        }
+    chatService.startRecording(async (chunks) => {
+      isRecording.value = false
+      const audioBlob = new Blob(chunks, { type: 'audio/webm' })
+      if (!audioBlob.size) {
+        return
       }
-      mediaRecorder.value.onstop = async () => {
-        try {
-          isLoading.value = true
-          const audioBlob = new Blob(audioChunks.value, { type: 'audio/webm' })
-          const text = await chatService.convertSpeechToText(audioBlob)
-          if (text) {
-            inputMessage.value = text
-          }
-          stream.getTracks().forEach(track => track.stop())
-        } catch (error) {
-          handleError(error, 'Convertir audio a texto')
-        } finally {
-          isLoading.value = false
-        }
+      isLoading.value = true
+      try {
+        const text = await chatService.convertSpeechToText(audioBlob)
+        if (text) inputMessage.value = text
+      } catch {
+      } finally {
+        isLoading.value = false
       }
-      mediaRecorder.value.start()
-      isRecording.value = true
-    } catch (error) {
-      handleError(error, 'iniciar grabación')
-    }
+    })
+    isRecording.value = true
   }
 }
-// Audio actualmente en reproducción
+
+
 const isAudioProcessing = ref(false)
-// Reproducir o pausar audio de un mensaje
 const playMessageAudio = async (text: string, messageId?: string) => {
   if (audioState.value.status === 'playing' && audioState.value.currentMessageId === messageId) {
     if (audioState.value.currentAudio) {
@@ -661,13 +648,18 @@ const newChat = async () => {
   currentConversationId.value = ''
   showHistory.value = false
   messages.value = [{
-    content: '¿En qué puedo ayudarte hoy?',
+    content: 'Hola soy ELSA, ¿En qué puedo ayudarte hoy?',
     sender: 'assistant',
     time: new Date().toISOString()
   }]
   await scrollToBottom()
 }
+  const handleEnter = () => {
+    if (isLoading.value) return
+    sendMessage()
+  }
 
+  
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown)
 })

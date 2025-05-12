@@ -45,6 +45,12 @@ export class CategoryService extends BaseApiService {
         limit: 1000,
         filters: []
       })
+      const categories = result.answer || []
+      if (BaseApiService.role !== 'Administrador') {
+        const blocked = ['Docente', 'Administrador', 'Estudiante']
+        return categories.filter((cat) => !blocked.includes(cat.name))
+      }
+
       return result.answer || []
     } catch (error) {
       return []

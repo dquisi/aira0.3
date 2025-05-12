@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import 'vue-select/dist/vue-select.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n';
 import { BaseApiService } from '@/services/BaseApiService';
 import { ThemeService } from '@/services/ThemeService';
 import { routes } from '@/router'
 import { useRouter, useRoute } from 'vue-router';
+import ChatService from '@/services/ChatService'
 
 const router = useRouter();
 const route = useRoute();
@@ -56,6 +57,17 @@ function getIcon(routeName: string): string {
 
 onMounted(async () => {
   try {
+    const svc = ChatService.getInstance()
+    const handler = () => {
+      if (document.visibilityState === 'hidden') {
+        svc.stopRecording()
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    onUnmounted(() => {
+      document.removeEventListener('visibilitychange', handler)
+    })
+
     await BaseApiService.getParamsFromUrl();
     filteredRoutes.value = routes.filter(route => {
       if (route.meta && (route.meta as any).roles) {

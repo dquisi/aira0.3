@@ -1,9 +1,19 @@
 import { BaseApiService } from './BaseApiService'
 import { Message, StreamEvent, FileAttachment } from '@/types'
+import { ref } from 'vue'
 
 class ChatService extends BaseApiService {
   private static instance: ChatService
   private subscribers: ((message: Message) => void)[] = []
+
+  private mediaRecorder: MediaRecorder | null = null
+  private audioChunks: Blob[] = []
+  private recordingTimeout: number | null = null
+  private visibilityHandler = () => {
+    if (document.visibilityState === 'hidden') {
+      this.stopRecording()
+    }
+  }
 
   private constructor() {
     super()
@@ -197,26 +207,25 @@ class ChatService extends BaseApiService {
                 Generator_Graphics: {
                   message: 'Generando gráficos',
                   icon: 'bi-bar-chart-line',
-                  time: 20,
+                  time: 25,
                   type: 'graphics'
                 },
                 generate_text_activities: {
                   message: 'Generando actividades',
                   icon: 'bi-list-check',
-                  time: 40,
+                  time: 50,
                   type: 'document'
                 },
                 Generate_content_resources: {
                   message: 'Generando recursos',
                   icon: 'bi-file-earmark-text',
-                  time: 40,
+                  time: 50,
                   type: 'document'
                 }
               }
 
               if (d.tool in specificTools) {
                 const toolInfo = specificTools[d.tool]
-                // Crear mensaje temporal con ID único para poder eliminarlo después
                 const tempId = 'temp_' + Date.now()
                 const tempStreamingMessage = {
                   content: `<div class="processing-visual ${toolInfo.type}">
@@ -359,6 +368,41 @@ class ChatService extends BaseApiService {
       throw error
     }
   }
+  public startRecording(onStop: (chunks: Blob[]) => void): void {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        this.audioChunks = []
+        this.mediaRecorder = new MediaRecorder(stream)
+
+        this.mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) this.audioChunks.push(e.data)
+        }
+
+        this.mediaRecorder.onstop = () => {
+          stream.getTracks().forEach((t) => t.stop())
+          if (this.recordingTimeout) {
+            clearTimeout(this.recordingTimeout)
+            this.recordingTimeout = null
+          }
+          document.removeEventListener('visibilitychange', this.visibilityHandler)
+          onStop(this.audioChunks)
+        }
+
+        this.mediaRecorder.start(1000)
+        this.recordingTimeout = window.setTimeout(() => this.stopRecording(), 4_500)
+        document.addEventListener('visibilitychange', this.visibilityHandler)
+      })
+      .catch((err) => {
+        throw err
+      })
+  }
+
+  public stopRecording(): void {
+    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      this.mediaRecorder.stop()
+    }
+  }
 
   async convertTextToSpeech(text: string): Promise<Blob | null> {
     try {
@@ -379,7 +423,6 @@ class ChatService extends BaseApiService {
     }
   }
 
-  // Course and resource methods removed
 }
 
 export default ChatService

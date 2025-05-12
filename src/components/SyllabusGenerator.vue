@@ -32,7 +32,7 @@
       <div class="syllabus-preview">
         <div v-if="state.content" class="preview-content">
           <h4>{{ t('prompts.syllabus.result') }}</h4>
-          <div class="preview-prompt" v-html="formattedContent"></div>
+          <div class="preview-prompt" v-html="state.content"></div> 
         </div>
         <div v-else-if="state.isGenerating" class="preview-placeholder">
           <div class="placeholder-icon">
@@ -65,7 +65,7 @@ import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import promptService from '@/services/PromptService'
 import { showNotification, handleError } from '@/utils/notifications'
-
+import { marked } from 'marked'
 const { t } = useI18n()
 
 const state = reactive({
@@ -103,7 +103,8 @@ async function generateSyllabus() {
   if (state.config.periods_count > 0 && state.config.days_per_period > 0) {
     state.isGenerating = true
     try {
-      state.content = await promptService.generateSyllabus(state.config, state.file)
+      const raw = await promptService.generateSyllabus(state.config, state.file)
+      state.content = renderMarkdown(raw)
       showNotification(t('prompts.syllabus.generated'), 'success')
     } catch (err) {
       handleError(err, t('common.error') || 'Error')
@@ -114,6 +115,43 @@ async function generateSyllabus() {
     showNotification(t('common.invalidNumber'), 'error')
   }
 }
+
+const renderMarkdown = (text: string) => {
+  try {
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      headerIds: false,
+      mangle: false,
+      smartLists: true,
+      smartypants: false,
+      highlight: function (code, language) {
+        try {
+          return code;
+        } catch (e) {
+          console.error('Error highlighting code:', e);
+          return code;
+        }
+      }
+    });
+    let rendered = marked(text)  
+    rendered = rendered
+      .replace(/<table>/g, '<table class="md-table">')
+      .replace(/<pre><code>/g, '<pre class="code-block"><code>')
+      .replace(/<ul>/g, '<ul class="md-list">');
+
+    rendered = rendered.replace(
+      /<a\s+href="([^"]+)"(.*?)>/g,
+      '<a href="$1"$2 target="_blank" rel="noopener noreferrer">'
+    );
+
+    return rendered;
+  } catch (error) {
+    handleError(error, 'renderizar markdown');
+    return text;
+  }
+};
+
 
 </script>
 
@@ -132,6 +170,7 @@ async function generateSyllabus() {
 }
 
 .preview-prompt {
+  font-size: 0.85rem;
   white-space: pre-wrap;
   max-height: 60vh;
   overflow-y: auto;
