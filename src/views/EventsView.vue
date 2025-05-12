@@ -99,25 +99,85 @@
                 :placeholder="t('events.enterValue', { param: param.name })" />
             </div>
           </div>
-          <div class="form-group">
-            <label>{{ t('events.scheduleType') }}</label>
-            <select v-model="scheduleType" class="form-control">
-              <option value="single">{{ t('events.singleExecution') }}</option>
-              <option value="recurring">{{ t('events.recurringExecution') }}</option>
-            </select>
-          </div>
-          <div v-if="scheduleType === 'single'" class="form-group">
-            <label>{{ t('events.executionDate') }}</label>
-            <input v-model="currentEvent.next_execution" type="datetime-local" class="form-control" required />
-          </div>
-          <div v-else class="form-group">
-            <label>{{ t('events.cronExpression') }}</label>
-            <cron-light v-model="currentEvent.cron" @error="cronError = $event" :locale="locale" />
-            <small>{{ t('events.cronHelp') }}</small>
-          </div>
-          <div v-if="scheduleType === 'recurring'" class="form-group">
-            <label>{{ t('events.endDate') }}</label>
-            <input v-model="currentEvent.end_date" type="datetime-local" class="form-control" />
+          <div class="schedule-section">
+            <div class="schedule-header">
+              <h4>{{ t('events.schedule') }}</h4>
+              <div class="schedule-type-toggle">
+                <button 
+                  class="schedule-type-btn" 
+                  :class="{ active: scheduleType === 'single' }" 
+                  @click="scheduleType = 'single'"
+                >
+                  <i class="bi bi-calendar-event"></i> {{ t('events.singleExecution') }}
+                </button>
+                <button 
+                  class="schedule-type-btn" 
+                  :class="{ active: scheduleType === 'recurring' }" 
+                  @click="scheduleType = 'recurring'"
+                >
+                  <i class="bi bi-calendar-check"></i> {{ t('events.recurringExecution') }}
+                </button>
+              </div>
+            </div>
+            
+            <div v-if="scheduleType === 'single'" class="schedule-content">
+              <div class="schedule-row">
+                <label>{{ t('events.executionDate') }}:</label>
+                <div class="schedule-input-with-icon">
+                  <i class="bi bi-calendar"></i>
+                  <input 
+                    v-model="currentEvent.next_execution" 
+                    type="datetime-local" 
+                    class="form-control datetime-picker" 
+                    required 
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div v-else class="schedule-content">
+              <div class="schedule-row">
+                <label>{{ t('events.cronExpression') }}:</label>
+                <div class="cron-container">
+                  <cron-light 
+                    v-model="currentEvent.cron" 
+                    @error="cronError = $event" 
+                    :locale="locale" 
+                    class="custom-cron"
+                  />
+                </div>
+              </div>
+              
+              <div class="schedule-row quick-schedule">
+                <label>{{ t('common.quickOptions') }}:</label>
+                <div class="quick-options">
+                  <button class="quick-option-btn" @click="currentEvent.cron = '0 0 * * *'">
+                    {{ t('events.everyDay') }}
+                  </button>
+                  <button class="quick-option-btn" @click="currentEvent.cron = '0 * * * *'">
+                    {{ t('events.everyHour') }}
+                  </button>
+                  <button class="quick-option-btn" @click="currentEvent.cron = '0 12 * * *'">
+                    {{ t('events.everyNoon') }}
+                  </button>
+                  <button class="quick-option-btn" @click="currentEvent.cron = '0 0 * * 1'">
+                    {{ t('events.everyWeek') }}
+                  </button>
+                </div>
+              </div>
+              
+              <div class="schedule-row">
+                <label>{{ t('events.endDate') }}:</label>
+                <div class="schedule-input-with-icon">
+                  <i class="bi bi-calendar-x"></i>
+                  <input 
+                    v-model="currentEvent.end_date" 
+                    type="datetime-local" 
+                    class="form-control datetime-picker"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div class="form-check">
             <input id="active" v-model="currentEvent.active" type="checkbox" class="form-check-input" />

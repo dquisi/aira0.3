@@ -81,7 +81,8 @@
     "export": "Exportar",
     "chooseOption": "Elige una opción",
     "copyTextSuccess": "Texto copiado",
-    "exportSuccess": "Exportación completada"
+    "exportSuccess": "Exportación completada",
+    "quickOptions": "Opciones rápidas"
   },
   "categories": {
     "title": "Categorías",
